@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiny_wins/confetti_screen.dart';
 
 class LogTinyWinScreen extends StatefulWidget {
   const LogTinyWinScreen({super.key});
@@ -14,22 +15,22 @@ class _LogTinyWinScreenState extends State<LogTinyWinScreen> {
     final winText = _controller.text.trim();
     if (winText.isEmpty) return;
 
-    // Navigate back with result for confetti screen to use
     Navigator.pop(context, winText);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Log Tiny Win'),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Log Tiny Win'),
+      //   centerTitle: true,
+      // ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 40),
             const Text(
               'Today I...',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

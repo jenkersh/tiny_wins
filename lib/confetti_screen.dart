@@ -1,7 +1,8 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-class ConfettiScreen extends StatelessWidget {
+class ConfettiScreen extends StatefulWidget {
   final String winText;
   final int streakCount; // For the streak popup
 
@@ -11,17 +12,43 @@ class ConfettiScreen extends StatelessWidget {
     required this.streakCount,
   });
 
+  @override
+  State<ConfettiScreen> createState() => _ConfettiScreenState();
+}
+
+
+class _ConfettiScreenState extends State<ConfettiScreen> {
+  late ConfettiController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ConfettiController(duration: const Duration(seconds: 3));
+    _controller.play();
+
+    // Show streak popup after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showStreakPopup();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _shareWin(BuildContext context) {
-    final text = "Today I... $winText 🏆 #TinyWin";
+    final text = "Today I... ${widget.winText} 🏆 #TinyWin";
     Share.share(text);
   }
 
-  void _showStreakPopup(BuildContext context) {
+  void _showStreakPopup() {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("🔥 Streak Alert!"),
-        content: Text("You're on a $streakCount-day streak! Keep it up!"),
+        content: Text("You're on a ${widget.streakCount}-day streak! Keep it up!"),
         actions: [
           TextButton(
             child: const Text("Nice!"),
@@ -35,9 +62,6 @@ class ConfettiScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Show the streak popup as soon as the screen builds
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showStreakPopup(context);
-    });
 
     return Scaffold(
       body: Center(
@@ -46,6 +70,16 @@ class ConfettiScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _controller,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  numberOfParticles: 30,
+                  colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+                ),
+              ),
               const Text(
                 "🎉 Congratulations!",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -57,7 +91,7 @@ class ConfettiScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               Text(
-                'Today I... $winText',
+                'Today I... ${widget.winText}',
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 20),
               ),
@@ -69,6 +103,12 @@ class ConfettiScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: const Text("Back to Calendar"),
               ),
             ],
           ),

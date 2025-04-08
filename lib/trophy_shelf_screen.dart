@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiny_wins/tiny_win_storage.dart';
 import 'log_tiny_win_screen.dart';
 import 'tiny_win_model.dart'; // Your model for logged wins
 import 'package:intl/intl.dart';
@@ -26,6 +27,22 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
     DateTime(2025, 4, 28): TinyWin(date: DateTime(2025, 4, 28), message: "Completed a challenging task at work!"),
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _loadWins();
+  }
+
+  void _loadWins() async {
+    final savedWins = await TinyWinStorage.loadWins();
+    setState(() {
+      for (var win in savedWins) {
+        winsByDate[DateTime(win.date.year, win.date.month, win.date.day)] = win;
+      }
+    });
+  }
+
+
   void _goToPreviousMonth() {
     setState(() {
       _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month - 1);
@@ -38,18 +55,88 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
     });
   }
 
-  void _navigateToLogWinScreen() async {
-    final result = await Navigator.push(
+  void _saveWin(DateTime date, String message) {
+    final win = TinyWin(date: date, message: message);
+    TinyWinStorage.addWin(win); // Save to shared preferences
+    setState(() {
+      winsByDate[DateTime(date.year, date.month, date.day)] = win; // Save locally for UI
+    });
+  }
+
+
+  Future<void> _navigateToLogWinScreen() async {
+    final winText = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LogTinyWinScreen()),
+      MaterialPageRoute(builder: (_) => const LogTinyWinScreen()),
     );
 
-    if (result != null && result is TinyWin) {
-      setState(() {
-        winsByDate[result.date] = result;
-      });
+    if (winText != null && winText is String && winText.isNotEmpty) {
+      _saveWin(DateTime.now(), winText); // Save the win
+      final streak = calculateCurrentStreak(); // Your logic to calculate streak
+      _showConfettiDialog(winText, streak);
     }
   }
+
+
+  int calculateCurrentStreak() {
+    DateTime today = DateTime.now();
+    DateTime currentDay = DateTime(today.year, today.month, today.day);
+
+    int streak = 0;
+
+    while (winsByDate.containsKey(currentDay)) {
+      streak++;
+      currentDay = currentDay.subtract(const Duration(days: 1));
+    }
+
+    return streak;
+  }
+
+  void _showConfettiDialog(String winText, int streakCount) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("🎉 Congratulations!"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
+            const SizedBox(height: 16),
+            Text("Today I... $winText", textAlign: TextAlign.center),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close confetti
+              if (streakCount >= 1) {
+                _showStreakDialog(streakCount); // Then show streak
+              }
+            },
+            child: const Text("Awesome!"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showStreakDialog(int streakCount) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("🔥 Streak Alert!"),
+        content: Text("You're on a $streakCount-day streak! Keep it going!"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Keep Winning!"),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   List<Widget> _buildTrophyShelves() {
     final firstDayOfMonth = DateTime(_selectedMonth.year, _selectedMonth.month, 1);
@@ -71,8 +158,24 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
         winsByDate[date] != null
             ? GestureDetector(
           onTap: () {
-            // Navigate to the details screen for the logged win
+            final win = winsByDate[date];
+            if (win != null) {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("🏆 Tiny Win"),
+                  content: Text(win.message),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Nice!"),
+                    ),
+                  ],
+                ),
+              );
+            }
           },
+
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -141,12 +244,9 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
     final monthFormat = DateFormat('MMMM yyyy');
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tiny Wins'),
-        centerTitle: true,
-      ),
       body: Column(
         children: [
+          SizedBox(height: 40),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
