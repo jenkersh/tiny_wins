@@ -15,6 +15,7 @@ class TrophyScreen extends StatefulWidget {
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
   Map<DateTime, TinyWin> winsByDate = {
+    DateTime(2025, 2, 28): TinyWin(date: DateTime(2025, 2, 28), message: "Completed a new project task!"),
     DateTime(2025, 3, 1): TinyWin(date: DateTime(2025, 3, 1), message: "Completed a new project task!"),
     DateTime(2025, 4, 1): TinyWin(date: DateTime(2025, 4, 1), message: "Completed a new project task!"),
     DateTime(2025, 4, 2): TinyWin(date: DateTime(2025, 4, 2), message: "Woke up early and stretched."),
@@ -220,7 +221,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                 ],
               ),
             )
-                : const SizedBox(width: 50), // No win
+                : const SizedBox(width: 50, height: 0), // No win
           );
           dayCounter++;
         }
