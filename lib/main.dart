@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiny_wins/trophy_shelf_screen.dart';
+import 'package:tiny_wins/trophy_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home: const TrophyShelfScreen(),
+      home: const TrophyScreen(),
     );
   }
 }

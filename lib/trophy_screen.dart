@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
-import 'log_tiny_win_screen.dart';
+import 'log_screen.dart';
 import 'tiny_win_model.dart'; // Your model for logged wins
 import 'package:intl/intl.dart';
+import 'package:tiny_wins/confetti.dart';
 
-class TrophyShelfScreen extends StatefulWidget {
-  const TrophyShelfScreen({super.key});
+class TrophyScreen extends StatefulWidget {
+  const TrophyScreen({super.key});
 
   @override
-  State<TrophyShelfScreen> createState() => _TrophyShelfScreenState();
+  State<TrophyScreen> createState() => _TrophyScreenState();
 }
 
-class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
+class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
   Map<DateTime, TinyWin> winsByDate = {
     DateTime(2025, 4, 1): TinyWin(date: DateTime(2025, 4, 1), message: "Completed a new project task!"),
@@ -67,7 +68,7 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
   Future<void> _navigateToLogWinScreen() async {
     final winText = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const LogTinyWinScreen()),
+      MaterialPageRoute(builder: (_) => const LogScreen()),
     );
 
     if (winText != null && winText is String && winText.isNotEmpty) {
@@ -96,27 +97,29 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("🎉 Congratulations!"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
-            const SizedBox(height: 16),
-            Text("Today I... $winText", textAlign: TextAlign.center),
+      builder: (_) => Confetti(
+        child: AlertDialog(
+          title: const Text("🎉 Congratulations!"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
+              const SizedBox(height: 16),
+              Text("Today I... $winText", textAlign: TextAlign.center),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close confetti
+                if (streakCount >= 1) {
+                  _showStreakDialog(streakCount); // Then show streak
+                }
+              },
+              child: const Text("Awesome!"),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close confetti
-              if (streakCount >= 1) {
-                _showStreakDialog(streakCount); // Then show streak
-              }
-            },
-            child: const Text("Awesome!"),
-          ),
-        ],
       ),
     );
   }
@@ -124,15 +127,17 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
   void _showStreakDialog(int streakCount) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("🔥 Streak Alert!"),
-        content: Text("You're on a $streakCount-day streak! Keep it going!"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Keep Winning!"),
-          ),
-        ],
+      builder: (_) => Confetti(
+        child: AlertDialog(
+          title: const Text("🔥 Streak Alert!"),
+          content: Text("You're on a $streakCount-day streak! Keep it going!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Keep Winning!"),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -162,15 +167,17 @@ class _TrophyShelfScreenState extends State<TrophyShelfScreen> {
             if (win != null) {
               showDialog(
                 context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("🏆 Tiny Win"),
-                  content: Text(win.message),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Nice!"),
-                    ),
-                  ],
+                builder: (_) => Confetti(
+                  child: AlertDialog(
+                    title: const Text("🏆 Tiny Win"),
+                    content: Text(win.message),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Nice!"),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

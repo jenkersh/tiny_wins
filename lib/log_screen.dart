@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tiny_wins/confetti_screen.dart';
+import 'package:tiny_wins/not_used.dart';
 
-class LogTinyWinScreen extends StatefulWidget {
-  const LogTinyWinScreen({super.key});
+class LogScreen extends StatefulWidget {
+  const LogScreen({super.key});
 
   @override
-  State<LogTinyWinScreen> createState() => _LogTinyWinScreenState();
+  State<LogScreen> createState() => _LogScreenState();
 }
 
-class _LogTinyWinScreenState extends State<LogTinyWinScreen> {
+class _LogScreenState extends State<LogScreen> {
   final TextEditingController _controller = TextEditingController();
 
   void _submitWin() {
