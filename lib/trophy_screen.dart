@@ -119,195 +119,190 @@ class _TrophyScreenState extends State<TrophyScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => Confetti(
-        child: AlertDialog(
-          title: const Text("🎉 Congratulations!"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
-              const SizedBox(height: 16),
-              Text("Today I... $winText", textAlign: TextAlign.center),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close confetti
-                if (streakCount >= 1) {
-                  _showStreakDialog(streakCount); // Then show streak
-                }
-              },
-              child: const Text("Awesome!"),
+      builder: (_) =>
+          Confetti(
+            child: AlertDialog(
+              title: const Text("🎉 Congratulations!"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
+                  const SizedBox(height: 16),
+                  Text("Today I... $winText", textAlign: TextAlign.center),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close confetti
+                    if (streakCount >= 1) {
+                      _showStreakDialog(streakCount); // Then show streak
+                    }
+                  },
+                  child: const Text("Awesome!"),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
   void _showStreakDialog(int streakCount) {
     showDialog(
       context: context,
-      builder: (_) => Confetti(
-        child: AlertDialog(
-          title: const Text("🔥 Streak Alert!"),
-          content: Text("You're on a $streakCount-day streak! Keep it going!"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Keep Winning!"),
+      builder: (_) =>
+          Confetti(
+            child: AlertDialog(
+              title: const Text("🔥 Streak Alert!"),
+              content: Text("You're on a $streakCount-day streak! Keep it going!"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Keep Winning!"),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
 
-  List<Widget> _buildTrophyShelves() {
+  List<List<Widget>> _buildWeekRows() {
     final firstDayOfMonth = DateTime(_selectedMonth.year, _selectedMonth.month, 1);
     final totalDays = DateUtils.getDaysInMonth(_selectedMonth.year, _selectedMonth.month);
 
-    final List<Widget> shelves = [];
+    final List<List<Widget>> weeks = [];
+    int startingWeekday = firstDayOfMonth.weekday % 7;
 
-    int dayCounter = 1;
-    int weekdayOffset = (firstDayOfMonth.weekday % 7); // 0 = Sunday, 6 = Saturday
+    for (int i = 0; i < 42; i++) {
+      int dayNumber = i - startingWeekday + 1;
+      DateTime date = DateTime(_selectedMonth.year, _selectedMonth.month, 1).add(Duration(days: dayNumber - 1));
 
-    while (dayCounter <= totalDays) {
-      List<Widget> currentRow = [];
-
-      // Fill empty slots before the first day of the week (only for first row)
-      if (shelves.isEmpty) {
-        for (int i = 0; i < weekdayOffset; i++) {
-          currentRow.add(const SizedBox(width: 50));
-        }
-      }
-
-      // Fill the rest of the week
-      for (int i = currentRow.length; i < 7; i++) {
-        if (dayCounter > totalDays) {
-          currentRow.add(const SizedBox(width: 50)); // End of month gap
-        } else {
-          final date = DateTime(_selectedMonth.year, _selectedMonth.month, dayCounter);
-          currentRow.add(
-            winsByDate[date] != null
-                ? GestureDetector(
-              onTap: () {
-                final win = winsByDate[date];
-                if (win != null) {
-                  showDialog(
-                    context: context,
-                    builder: (_) => Confetti(
-                      child: AlertDialog(
-                        title: const Text("🏆 Tiny Win"),
-                        content: Text(win.message),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Nice!"),
-                          ),
-                        ],
-                      ),
+      Widget dayWidget;
+      if (dayNumber < 1 || dayNumber > totalDays) {
+        dayWidget = const SizedBox(width: 40);
+      } else if (winsByDate[date] != null) {
+        final win = winsByDate[date]!;
+        dayWidget = GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (_) => Confetti(
+                child: AlertDialog(
+                  title: const Text("🏆 Tiny Win"),
+                  content: Text(win.message),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Nice!"),
                     ),
-                  );
-                }
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.emoji_events, color: Colors.amber, size: 40),
-                  Text('$dayCounter', style: const TextStyle(fontSize: 16)),
-                ],
+                  ],
+                ),
               ),
-            )
-                : const SizedBox(width: 50, height: 0), // No win
-          );
-          dayCounter++;
-        }
-      }
-
-      // Is this the first or last row?
-      final isFirstRow = shelves.isEmpty;
-      final isLastRow = dayCounter > totalDays;
-
-      shelves.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16), // padding from screen edge
+            );
+          },
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: 7 * 50.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: currentRow,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: isFirstRow ? (weekdayOffset * 50.0) : 0,
-                  right: isLastRow
-                      ? ((7 - currentRow.where((w) => w is! SizedBox).length) * 50.0)
-                      : 0,
-                ),
-                child: Container(
-                  height: 8,
-                  width: 7 * 50.0,
-                  decoration: BoxDecoration(
-                    color: Colors.brown[200],
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Colors.black26,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const Icon(Icons.emoji_events, color: Colors.amber, size: 40),
+              Text('$dayNumber', style: const TextStyle(fontSize: 16)),
             ],
           ),
-        ),
-      );
+        );
+      } else {
+        dayWidget = const SizedBox(width: 40);
+      }
 
-      // Reset offset after first row
-      weekdayOffset = 0;
+      int weekIndex = i ~/ 7;
+      if (weeks.length <= weekIndex) {
+        weeks.add([]);
+      }
+      weeks[weekIndex].add(dayWidget);
     }
 
-    return shelves;
+    return weeks;
   }
 
 
 
   @override
   Widget build(BuildContext context) {
-    final monthFormat = DateFormat('MMMM yyyy');
+    final weekRows = _buildWeekRows();
 
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(icon: const Icon(Icons.arrow_back), onPressed: _goToPreviousMonth),
-                Text(monthFormat.format(_selectedMonth), style: const TextStyle(fontSize: 20)),
-                IconButton(icon: const Icon(Icons.arrow_forward), onPressed: _goToNextMonth),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 🔼 Month Selector with Arrows
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: _goToPreviousMonth,
+                  ),
+                  Text(
+                    DateFormat.yMMMM().format(_selectedMonth),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: _goToNextMonth,
+                  ),
+                ],
+              ),
             ),
-          ),
-          // No scrolling here
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0),
-            child: Column(
-              children: _buildTrophyShelves(),
+
+            // 🏆 Trophy Shelves
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final rowHeight = constraints.maxHeight / 6;
+
+                    return Column(
+                      children: List.generate(weekRows.length, (i) {
+                        final row = weekRows[i];
+
+                        return SizedBox(
+                          height: rowHeight,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: row,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: Colors.brown[200],
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      blurRadius: 4,
+                                      color: Colors.black26,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToLogWinScreen,
