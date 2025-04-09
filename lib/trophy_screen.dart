@@ -168,59 +168,116 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
 
   List<List<Widget>> _buildWeekRows() {
-    final firstDayOfMonth = DateTime(_selectedMonth.year, _selectedMonth.month, 1);
-    final totalDays = DateUtils.getDaysInMonth(_selectedMonth.year, _selectedMonth.month);
+    final year = _selectedMonth.year;
+    final month = _selectedMonth.month;
+    final firstDayOfMonth = DateTime(year, month, 1);
+    final lastDayOfMonth = DateTime(year, month + 1, 0);
 
-    final List<List<Widget>> weeks = [];
-    int startingWeekday = firstDayOfMonth.weekday % 7;
+    // Determine the first visible day (start of the calendar grid)
+    final int startOffset = firstDayOfMonth.weekday % 7; // Sunday = 0
+    DateTime current = firstDayOfMonth.subtract(Duration(days: startOffset));
 
-    for (int i = 0; i < 42; i++) {
-      int dayNumber = i - startingWeekday + 1;
-      DateTime date = DateTime(_selectedMonth.year, _selectedMonth.month, 1).add(Duration(days: dayNumber - 1));
+    final List<List<Widget>> weekRows = [];
 
-      Widget dayWidget;
-      if (dayNumber < 1 || dayNumber > totalDays) {
-        dayWidget = const SizedBox(width: 40);
-      } else if (winsByDate[date] != null) {
-        final win = winsByDate[date]!;
-        dayWidget = GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) => Confetti(
-                child: AlertDialog(
-                  title: const Text("🏆 Tiny Win"),
-                  content: Text(win.message),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Nice!"),
+    while (current.isBefore(lastDayOfMonth) || current.isAtSameMomentAs(lastDayOfMonth)) {
+      final List<Widget> week = [];
+
+      for (int i = 0; i < 7; i++) {
+        if (current.month != month) {
+          // Fill in blank spaces for days outside current month
+          week.add(const SizedBox(width: 40));
+        } else if (winsByDate[current] != null) {
+          final win = winsByDate[current]!;
+          week.add(
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => Confetti(
+                    child: AlertDialog(
+                      title: const Text("🏆 Tiny Win"),
+                      content: Text(win.message),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Nice!"),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.emoji_events, color: Colors.amber, size: 40),
+                  Text('${current.day}', style: const TextStyle(fontSize: 16)),
+                ],
               ),
-            );
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.emoji_events, color: Colors.amber, size: 40),
-              Text('$dayNumber', style: const TextStyle(fontSize: 16)),
-            ],
-          ),
-        );
-      } else {
-        dayWidget = const SizedBox(width: 40);
+            ),
+          );
+        } else {
+          week.add(const SizedBox(width: 40));
+        }
+
+        current = current.add(const Duration(days: 1));
       }
 
-      int weekIndex = i ~/ 7;
-      if (weeks.length <= weekIndex) {
-        weeks.add([]);
-      }
-      weeks[weekIndex].add(dayWidget);
+      weekRows.add(week);
     }
 
-    return weeks;
+    return weekRows;
+  }
+
+
+  List<Widget> _buildTrophyShelves(List<List<Widget>> weekRows) {
+    final List<Widget> shelves = [];
+
+    final year = _selectedMonth.year;
+    final month = _selectedMonth.month;
+    final firstDayOfMonth = DateTime(year, month, 1);
+    final lastDayOfMonth = DateTime(year, month + 1, 0);
+
+    final int startOffset = firstDayOfMonth.weekday % 7;
+    DateTime current = firstDayOfMonth.subtract(Duration(days: startOffset));
+
+    for (int weekIndex = 0; weekIndex < weekRows.length; weekIndex++) {
+      int visibleDays = 0;
+      int offset = 0;
+
+      for (int i = 0; i < 7; i++) {
+        if (weekIndex == 0 && i < startOffset) {
+          offset++;
+          current = current.add(const Duration(days: 1));
+          continue;
+        }
+
+        if (current.isAfter(lastDayOfMonth)) break;
+
+        if (current.month == month) {
+          visibleDays++;
+        }
+
+        current = current.add(const Duration(days: 1));
+      }
+
+      // Width of one cell
+      const double cellWidth = 40.0;
+
+      shelves.add(
+        Padding(
+          padding: EdgeInsets.only(left: offset * cellWidth),
+          child: Container(
+            width: visibleDays * cellWidth,
+            height: 8,
+            color: Colors.brown,
+            margin: const EdgeInsets.symmetric(vertical: 4),
+          ),
+        ),
+      );
+    }
+
+    return shelves;
   }
 
 
@@ -228,6 +285,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   @override
   Widget build(BuildContext context) {
     final weekRows = _buildWeekRows();
+    final trophyShelves = _buildTrophyShelves(weekRows);
 
     return Scaffold(
       body: SafeArea(
@@ -261,42 +319,25 @@ class _TrophyScreenState extends State<TrophyScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    final rowHeight = constraints.maxHeight / 6;
+                    final rowHeight = constraints.maxHeight / 9;
 
                     return Column(
-                      children: List.generate(weekRows.length, (i) {
-                        final row = weekRows[i];
-
-                        return SizedBox(
-                          height: rowHeight,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: row,
-                                ),
+                      children: List.generate(weekRows.length, (index) {
+                        return Column(
+                          children: [
+                            Container(
+                              height: rowHeight,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: weekRows[index],
                               ),
-                              const SizedBox(height: 4),
-                              Container(
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.brown[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      blurRadius: 4,
-                                      color: Colors.black26,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                            trophyShelves[index],
+                          ],
                         );
                       }),
                     );
+
                   },
                 ),
               ),
