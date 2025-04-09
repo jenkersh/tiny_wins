@@ -239,34 +239,32 @@ class _TrophyScreenState extends State<TrophyScreen> {
     final lastDayOfMonth = DateTime(year, month + 1, 0);
 
     final int startOffset = firstDayOfMonth.weekday % 7;
-    DateTime current = firstDayOfMonth.subtract(Duration(days: startOffset));
+    final int endWeekday = lastDayOfMonth.weekday % 7;
+
+    const double cellWidth = 40.0;
 
     for (int weekIndex = 0; weekIndex < weekRows.length; weekIndex++) {
-      int visibleDays = 0;
-      int offset = 0;
+      int leftPadding = 0;
+      int rightPadding = 0; // Padding for the last shelf
 
-      for (int i = 0; i < 7; i++) {
-        if (weekIndex == 0 && i < startOffset) {
-          offset++;
-          current = current.add(const Duration(days: 1));
-          continue;
-        }
+      int visibleDays = 7;
 
-        if (current.isAfter(lastDayOfMonth)) break;
+      if (weekIndex == 0) {
+        // First week: pad from the left based on the weekday of the 1st
+        leftPadding = startOffset;
+        visibleDays = 7 - startOffset;
+      } else if (weekIndex == weekRows.length - 1) {
+        // Last week: show only up to the last date's weekday
+        leftPadding = 0;
+        visibleDays = endWeekday + 1;
 
-        if (current.month == month) {
-          visibleDays++;
-        }
-
-        current = current.add(const Duration(days: 1));
+        // Add right padding to align the shelf properly when it's a shorter week
+        rightPadding = 7 - visibleDays;
       }
-
-      // Width of one cell
-      const double cellWidth = 40.0;
 
       shelves.add(
         Padding(
-          padding: EdgeInsets.only(left: offset * cellWidth),
+          padding: EdgeInsets.only(left: leftPadding * cellWidth, right: rightPadding * cellWidth),
           child: Container(
             width: visibleDays * cellWidth,
             height: 8,
@@ -279,6 +277,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
     return shelves;
   }
+
 
 
 
