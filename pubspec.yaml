@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.5.3
   table_calendar: ^3.2.0
   confetti: ^0.8.0
+  animated_text_kit: ^4.2.3
 
 dev_dependencies:
   flutter_test:
