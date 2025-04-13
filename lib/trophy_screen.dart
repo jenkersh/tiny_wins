@@ -167,7 +167,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
 
-  List<List<Widget>> _buildWeekRows() {
+  List<List<Widget>> _buildWeekRows(double cellWidth) {
     final year = _selectedMonth.year;
     final month = _selectedMonth.month;
     final firstDayOfMonth = DateTime(year, month, 1);
@@ -185,7 +185,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
       for (int i = 0; i < 7; i++) {
         if (current.month != month) {
           // Fill in blank spaces for days outside current month
-          week.add(const SizedBox(width: 40));
+          week.add(SizedBox(width: cellWidth));
         } else if (winsByDate[current] != null) {
           final win = winsByDate[current]!;
           week.add(
@@ -207,18 +207,21 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   ),
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 27),
+              child: Container(
+                width: cellWidth,
+                height: cellWidth,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Icon(Icons.emoji_events, color: Colors.amber, size: 40),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 7),
+                    Positioned(
+                      bottom: cellWidth * -0.1,
+                        child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth)),
+                    Positioned(
+                      bottom: cellWidth * 0.32,
                       child: Text(
                         '${current.day}',
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: cellWidth * 0.3,
                           fontWeight: FontWeight.bold,
                           color: Colors.black, // or white for contrast
                           shadows: [
@@ -238,7 +241,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
             ),
           );
         } else {
-          week.add(const SizedBox(width: 40));
+          week.add(SizedBox(width: cellWidth));
         }
 
         current = current.add(const Duration(days: 1));
@@ -251,7 +254,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
 
-  List<Widget> _buildTrophyShelves(List<List<Widget>> weekRows) {
+  List<Widget> _buildTrophyShelves(List<List<Widget>> weekRows, double cellWidth) {
     final List<Widget> shelves = [];
 
     final year = _selectedMonth.year;
@@ -262,7 +265,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
     final int startOffset = firstDayOfMonth.weekday % 7;
     final int endWeekday = lastDayOfMonth.weekday % 7;
 
-    const double cellWidth = 40.0;
+    //const double cellWidth = 40.0;
 
     for (int weekIndex = 0; weekIndex < weekRows.length; weekIndex++) {
       int leftPadding = 0;
@@ -288,9 +291,9 @@ class _TrophyScreenState extends State<TrophyScreen> {
           padding: EdgeInsets.only(left: leftPadding * cellWidth, right: rightPadding * cellWidth),
           child: Container(
             width: visibleDays * cellWidth,
-            height: 8,
+            height: cellWidth * 0.2,
             color: Colors.brown,
-            margin: const EdgeInsets.only(top: 0),
+            //margin: const EdgeInsets.only(top: 0),
           ),
         ),
       );
@@ -299,54 +302,67 @@ class _TrophyScreenState extends State<TrophyScreen> {
     return shelves;
   }
 
+  void _handleHorizontalSwipe(DragEndDetails details) {
+    if (details.primaryVelocity == null) return;
+
+    if (details.primaryVelocity! < 0) {
+      // Swipe left → go to next month
+      _goToNextMonth();
+    } else if (details.primaryVelocity! > 0) {
+      // Swipe right → go to previous month
+      _goToPreviousMonth();
+    }
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
-    final weekRows = _buildWeekRows();
-    final trophyShelves = _buildTrophyShelves(weekRows);
-
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // 🔼 Month Selector with Arrows
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: _goToPreviousMonth,
-                  ),
-                  Text(
-                    DateFormat.yMMMM().format(_selectedMonth),
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: _goToNextMonth,
-                  ),
-                ],
-              ),
-            ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double totalWidth = constraints.maxWidth - 60; // 30 padding each side
+            double cellWidth = totalWidth / 7;
 
-            // 🏆 Trophy Shelves
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final rowHeight = constraints.maxHeight / 9;
+            final weekRows = _buildWeekRows(cellWidth);
+            final trophyShelves = _buildTrophyShelves(weekRows, cellWidth);
 
-                    return Column(
+            return Column(
+              children: [
+                // 🔼 Month Selector with Arrows
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.chevron_left),
+                        onPressed: _goToPreviousMonth,
+                      ),
+                      Text(
+                        DateFormat.yMMMM().format(_selectedMonth),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right),
+                        onPressed: _goToNextMonth,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 🏆 Trophy Shelves
+                Expanded(
+                  child: GestureDetector(
+                    onHorizontalDragEnd: _handleHorizontalSwipe,
+                    child: Column(
                       children: List.generate(weekRows.length, (index) {
                         return Column(
                           children: [
+                            SizedBox(height: cellWidth * .6),
                             Container(
-                              height: rowHeight,
+                              height: cellWidth,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: weekRows[index],
@@ -356,13 +372,12 @@ class _TrophyScreenState extends State<TrophyScreen> {
                           ],
                         );
                       }),
-                    );
-
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
