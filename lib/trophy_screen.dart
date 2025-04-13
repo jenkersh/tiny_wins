@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:tiny_wins/share_button.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
 import 'log_screen.dart';
 import 'tiny_win_model.dart'; // Your model for logged wins
@@ -48,7 +50,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
     DateTime(2025, 4, 29): TinyWin(date: DateTime(2025, 4, 29), message: "Listened to my favorite song."),
     DateTime(2025, 4, 30): TinyWin(date: DateTime(2025, 4, 30), message: "Completed a challenging task at work!"),
   };
-
+  final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
   void initState() {
@@ -115,35 +117,99 @@ class _TrophyScreenState extends State<TrophyScreen> {
     return streak;
   }
 
+  Widget buildScreenshotContainer(String winText) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          color: Colors.white,
+          alignment: Alignment.center,
+          height: 400,
+          width: 400,
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '🏆 Tiny Win!',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '"$winText"',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Image.asset(
+                    'assets/trophy.png',
+                    height: 80,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const Positioned(
+          bottom: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Made with ❤️', style: TextStyle(fontSize: 10)),
+              Text('Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+
   void _showConfettiDialog(String winText, int streakCount) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) =>
-          Confetti(
-            child: AlertDialog(
-              title: const Text("🎉 Congratulations!"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
-                  const SizedBox(height: 16),
-                  Text("Today I... $winText", textAlign: TextAlign.center),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close confetti
-                    if (streakCount >= 1) {
-                      _showStreakDialog(streakCount); // Then show streak
-                    }
-                  },
-                  child: const Text("Awesome!"),
-                ),
-              ],
-            ),
+      builder: (_) => Confetti(
+        child: AlertDialog(
+          title: const Text("🎉 Congratulations!"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
+              const SizedBox(height: 16),
+              Text("Today I... $winText", textAlign: TextAlign.center),
+            ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (streakCount >= 1) {
+                  _showStreakDialog(streakCount);
+                }
+              },
+              child: const Text("Awesome!"),
+            ),
+            ShareButton(
+              winText: winText,
+              screenshotController: _screenshotController,
+              context: context,
+              screenshotContainer: buildScreenshotContainer(winText),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -202,6 +268,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                           onPressed: () => Navigator.pop(context),
                           child: const Text("Nice!"),
                         ),
+                        ShareButton(context: context, winText: win.message, screenshotController: _screenshotController, screenshotContainer: buildScreenshotContainer(win.message),),
                       ],
                     ),
                   ),
@@ -318,11 +385,12 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            double totalWidth = constraints.maxWidth - 60; // 30 padding each side
+            double totalWidth = constraints.maxWidth - 80; // 40 padding each side
             double cellWidth = totalWidth / 7;
 
             final weekRows = _buildWeekRows(cellWidth);

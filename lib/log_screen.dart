@@ -21,15 +21,42 @@ class _LogScreenState extends State<LogScreen> {
     'helped someone out'
   ];
 
+
   bool get _showSuggestions =>
       !_focusNode.hasFocus && _controller.text.isEmpty;
 
   void _submitWin() {
     final winText = _controller.text.trim();
-    if (winText.isEmpty) return;
+    final encouragements = [
+      "Enter a win in the box! I know you can think of something that went well today.",
+      "Enter a win in the box! Even the tiniest win counts!",
+      "Enter a win in the box! You’ve made it this far — that’s already a win.",
+      "Enter a win in the box! You’re doing better than you think.",
+      "Enter a win in the box! Give yourself some credit — anything positive goes!",
+    ];
+
+    final random = (encouragements..shuffle()).first;
+
+    if (winText.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("You’ve got this 💪"),
+          content: Text(random),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Okay, I'll try!"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     Navigator.pop(context, winText);
   }
+
 
   @override
   void initState() {
@@ -96,6 +123,7 @@ class _LogScreenState extends State<LogScreen> {
                     border: OutlineInputBorder(),
                   ),
                   maxLines: 4,
+                  maxLength: 200,
                 ),
               ],
             ),
