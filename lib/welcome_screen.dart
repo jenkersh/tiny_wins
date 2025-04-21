@@ -86,7 +86,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
 
                 const Expanded(
-                  flex: 12, // Proportional spacing in the middle
+                  flex: 8, // Proportional spacing in the middle
                   child: SizedBox(),
                 ),
                 Padding(

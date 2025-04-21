@@ -387,66 +387,74 @@ class _TrophyScreenState extends State<TrophyScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            double totalWidth = constraints.maxWidth - 80; // 40 padding each side
-            double cellWidth = totalWidth / 7;
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double totalWidth = constraints.maxWidth - 80; // 40 padding each side
+          double cellWidth = totalWidth / 7;
 
-            final weekRows = _buildWeekRows(cellWidth);
-            final trophyShelves = _buildTrophyShelves(weekRows, cellWidth);
+          final weekRows = _buildWeekRows(cellWidth);
+          final trophyShelves = _buildTrophyShelves(weekRows, cellWidth);
 
-            return Column(
-              children: [
-                // 🔼 Month Selector with Arrows
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left),
-                        onPressed: _goToPreviousMonth,
-                      ),
-                      Text(
-                        DateFormat.yMMMM().format(_selectedMonth),
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: _goToNextMonth,
-                      ),
-                    ],
-                  ),
-                ),
-
-                // 🏆 Trophy Shelves
-                Expanded(
-                  child: GestureDetector(
-                    onHorizontalDragEnd: _handleHorizontalSwipe,
-                    child: Column(
-                      children: List.generate(weekRows.length, (index) {
-                        return Column(
-                          children: [
-                            SizedBox(height: cellWidth * .6),
-                            Container(
-                              height: cellWidth,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: weekRows[index],
-                              ),
-                            ),
-                            trophyShelves[index],
-                          ],
-                        );
-                      }),
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('images/background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // 🔼 Month Selector with Arrows
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: _goToPreviousMonth,
+                        ),
+                        Text(
+                          DateFormat.yMMMM().format(_selectedMonth),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed: _goToNextMonth,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            );
-          },
-        ),
+              
+                  // 🏆 Trophy Shelves
+                  Expanded(
+                    child: GestureDetector(
+                      onHorizontalDragEnd: _handleHorizontalSwipe,
+                      child: Column(
+                        children: List.generate(weekRows.length, (index) {
+                          return Column(
+                            children: [
+                              SizedBox(height: cellWidth * .6),
+                              Container(
+                                height: cellWidth,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: weekRows[index],
+                                ),
+                              ),
+                              trophyShelves[index],
+                            ],
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToLogWinScreen,
