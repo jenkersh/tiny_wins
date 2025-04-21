@@ -429,25 +429,22 @@ class _TrophyScreenState extends State<TrophyScreen> {
               
                   // 🏆 Trophy Shelves
                   Expanded(
-                    child: GestureDetector(
-                      onHorizontalDragEnd: _handleHorizontalSwipe,
-                      child: Column(
-                        children: List.generate(weekRows.length, (index) {
-                          return Column(
-                            children: [
-                              SizedBox(height: cellWidth * .6),
-                              Container(
-                                height: cellWidth,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: weekRows[index],
-                                ),
+                    child: Column(
+                      children: List.generate(weekRows.length, (index) {
+                        return Column(
+                          children: [
+                            SizedBox(height: cellWidth * .6),
+                            Container(
+                              height: cellWidth,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: weekRows[index],
                               ),
-                              trophyShelves[index],
-                            ],
-                          );
-                        }),
-                      ),
+                            ),
+                            trophyShelves[index],
+                          ],
+                        );
+                      }),
                     ),
                   ),
                 ],

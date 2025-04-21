@@ -79,65 +79,74 @@ class _LogScreenState extends State<LogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Today I...',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Stack(
-              alignment: Alignment.topLeft,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/log_background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_showSuggestions)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    child: SizedBox(
-                      height: 60, // approximate height to fit inside TextField
-                      child: AnimatedTextKit(
-                        animatedTexts: suggestions
-                            .map((text) => TypewriterAnimatedText(
-                          text,
-                          textStyle: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 16,
+                const Text(
+                  'Today I...',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Stack(
+                  alignment: Alignment.topLeft,
+                  children: [
+                    if (_showSuggestions)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        child: SizedBox(
+                          height: 60, // approximate height to fit inside TextField
+                          child: AnimatedTextKit(
+                            animatedTexts: suggestions
+                                .map((text) => TypewriterAnimatedText(
+                              text,
+                              textStyle: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 16,
+                              ),
+                              speed: const Duration(milliseconds: 30),
+                            ))
+                                .toList(),
+                            isRepeatingAnimation: true,
+                            repeatForever: true,
+                            pause: const Duration(seconds: 1),
+                            displayFullTextOnTap: false,
                           ),
-                          speed: const Duration(milliseconds: 30),
-                        ))
-                            .toList(),
-                        isRepeatingAnimation: true,
-                        repeatForever: true,
-                        pause: const Duration(seconds: 1),
-                        displayFullTextOnTap: false,
+                        ),
                       ),
+                    TextField(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                      maxLength: 200,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _submitWin,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Text('Hooray! 🎉', style: TextStyle(fontSize: 18)),
                     ),
                   ),
-                TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 4,
-                  maxLength: 200,
                 ),
               ],
             ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitWin,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text('Hooray! 🎉', style: TextStyle(fontSize: 18)),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
