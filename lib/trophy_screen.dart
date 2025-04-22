@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:speech_bubble/speech_bubble.dart';
 import 'package:tiny_wins/share_button.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
 import 'log_screen.dart';
 import 'tiny_win_model.dart'; // Your model for logged wins
 import 'package:intl/intl.dart';
 import 'package:tiny_wins/confetti.dart';
+import 'package:intl/intl.dart';
 
 class TrophyScreen extends StatefulWidget {
   const TrophyScreen({super.key});
@@ -179,33 +181,82 @@ class _TrophyScreenState extends State<TrophyScreen> {
   void _showConfettiDialog(String winText, int streakCount) {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (_) => Confetti(
-        child: AlertDialog(
-          title: const Text("🎉 Congratulations!"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.emoji_events, size: 50, color: Colors.amber),
-              const SizedBox(height: 16),
-              Text("Today I... $winText", textAlign: TextAlign.center),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                if (streakCount >= 1) {
-                  _showStreakDialog(streakCount);
-                }
-              },
-              child: const Text("Awesome!"),
+        child: Stack(
+          children: [
+            AlertDialog(
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(30),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Speech bubble + mascot
+                  Column(
+                    children: [
+                      Material(
+                        color: Colors.transparent,
+                        child: SpeechBubble(
+                          nipLocation: NipLocation.BOTTOM,
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: 12,
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: "Congratulations! I'd be proud if I ",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                ),
+                                TextSpan(
+                                  text: "$winText",
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                ),
+                                const TextSpan(
+                                  text: " 🎉",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Image.asset(
+                        'images/mascot.png',
+                        height: 120,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ShareButton(
+                    winText: winText,
+                    screenshotController: _screenshotController,
+                    context: context,
+                    screenshotContainer: buildScreenshotContainer(winText),
+                  ),
+                ],
+              ),
             ),
-            ShareButton(
-              winText: winText,
-              screenshotController: _screenshotController,
-              context: context,
-              screenshotContainer: buildScreenshotContainer(winText),
+            // Close icon in the corner
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  if (streakCount >= 1) {
+                    _showStreakDialog(streakCount);
+                  }
+                },
+                child: const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.black26,
+                  child: Icon(Icons.close, size: 20, color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
@@ -216,21 +267,57 @@ class _TrophyScreenState extends State<TrophyScreen> {
   void _showStreakDialog(int streakCount) {
     showDialog(
       context: context,
-      builder: (_) =>
-          Confetti(
-            child: AlertDialog(
-              title: const Text("🔥 Streak Alert!"),
-              content: Text("You're on a $streakCount-day streak! Keep it going!"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Keep Winning!"),
-                ),
-              ],
+      barrierDismissible: true,
+      builder: (_) => Confetti(
+        child: Stack(
+          children: [
+            AlertDialog(
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(30),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "You're on a ",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                        TextSpan(
+                          text: "$streakCount-day",
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        const TextSpan(
+                          text: " streak! 🔥\nKeep it going!",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.black26,
+                  child: Icon(Icons.close, size: 20, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+
 
 
   List<List<Widget>> _buildWeekRows(double cellWidth) {
@@ -255,57 +342,115 @@ class _TrophyScreenState extends State<TrophyScreen> {
         } else if (winsByDate[current] != null) {
           final win = winsByDate[current]!;
           week.add(
-            GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => Confetti(
-                    child: AlertDialog(
-                      title: const Text("🏆 Tiny Win"),
-                      content: Text(win.message),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Nice!"),
-                        ),
-                        ShareButton(context: context, winText: win.message, screenshotController: _screenshotController, screenshotContainer: buildScreenshotContainer(win.message),),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                width: cellWidth,
-                height: cellWidth,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      bottom: cellWidth * -0.1,
-                        child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth)),
-                    Positioned(
-                      bottom: cellWidth * 0.32,
-                      child: Text(
-                        '${current.day}',
-                        style: TextStyle(
-                          fontSize: cellWidth * 0.3,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // or white for contrast
-                          shadows: [
-                            Shadow(
-                              offset: Offset(1, 1),
-                              blurRadius: 2,
-                              color: Colors.white,
+              GestureDetector(
+                onTap: () {
+                  final formattedDate = DateFormat.yMMMMd().format(current); // e.g. April 4, 2025
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (_) => Confetti(
+                      child: Stack(
+                        children: [
+                          AlertDialog(
+                            elevation: 0,
+                            contentPadding: const EdgeInsets.all(30),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  children: [
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: SpeechBubble(
+                                        nipLocation: NipLocation.BOTTOM,
+                                        color: Theme.of(context).colorScheme.surface,
+                                        borderRadius: 12,
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "On ${DateFormat('MMMM d').format(win.date)}, you logged: \n",
+                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                              ),
+                                              TextSpan(
+                                                text: win.message,
+                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                              ),
+                                              const TextSpan(
+                                                text: "\n That was great!",
+                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Image.asset(
+                                      'images/mascot.png',
+                                      height: 120,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                ShareButton(
+                                  context: context,
+                                  winText: win.message,
+                                  screenshotController: _screenshotController,
+                                  screenshotContainer: buildScreenshotContainer(win.message),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: const CircleAvatar(
+                                radius: 24,
+                                backgroundColor: Colors.black26,
+                                child: Icon(Icons.close, size: 20, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  );
+                },
+                child: Container(
+                  width: cellWidth,
+                  height: cellWidth,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        bottom: cellWidth * -0.1,
+                        child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth),
+                      ),
+                      Positioned(
+                        bottom: cellWidth * 0.32,
+                        child: Text(
+                          '${current.day}',
+                          style: TextStyle(
+                            fontSize: cellWidth * 0.3,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            shadows: [
+                              Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.white),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              )
 
-            ),
           );
         } else {
           week.add(SizedBox(width: cellWidth));

@@ -92,7 +92,7 @@ class _ShareButtonState extends State<ShareButton> {
                 children: const [
                   Text("Share"),
                   SizedBox(width: 8),
-                  Icon(Icons.share, size: 20),
+                  Icon(Icons.share, size: 20, color: Colors.white),
                 ],
               ),
       ),

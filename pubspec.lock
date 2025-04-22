@@ -381,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  speech_bubble:
+    dependency: "direct main"
+    description:
+      name: speech_bubble
+      sha256: c26f7ff6f61bef162a4b13e79a554c1d59b063e3f9087bc2cd088928fcb35480
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.9"
   sprintf:
     dependency: transitive
     description:
