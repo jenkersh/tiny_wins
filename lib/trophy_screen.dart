@@ -155,7 +155,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   ),
                   const SizedBox(height: 20),
                   Image.asset(
-                    'assets/trophy.png',
+                    'images/mascot.png',
                     height: 80,
                   ),
                 ],
