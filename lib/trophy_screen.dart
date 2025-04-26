@@ -257,10 +257,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
 
   void _deleteWin(TinyWin win) async {
-    winsByDate.remove(win.date);
+    winsByDate.remove(normalizeDate(win.date)); // ✅ Normalize before removing
     await TinyWinStorage.saveWins(winsByDate.values.toList());
     setState(() {});
   }
+
 
 
 
