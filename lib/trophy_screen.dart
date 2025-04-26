@@ -149,11 +149,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
         title: const Text('Edit or Delete Win'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start, // 👈 makes the text left-aligned
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Choose an option below!'),
             const SizedBox(height: 20),
-            Center( // 👈 center just the buttons
+            Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -162,20 +162,20 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       Navigator.pop(context);
                       _editWin(win);
                     },
-                    child: Text('Edit', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                    child: const Text('Edit', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
                   ),
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      _deleteWin(win);
+                      _confirmDeleteWin(win); // Show confirmation before deleting
                     },
-                    child: const Text('Delete', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                    child: const Text('Delete', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
                   ),
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
                   ),
                 ],
               ),
@@ -185,6 +185,30 @@ class _TrophyScreenState extends State<TrophyScreen> {
       ),
     );
   }
+
+  void _confirmDeleteWin(TinyWin win) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Win?'),
+        content: const Text('Are you sure you want to delete this tiny win?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close confirm dialog
+              _deleteWin(win); // Actually delete
+            },
+            child: const Text('Yes, Delete', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Just close confirm dialog
+            child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   void _editWin(TinyWin win) async {
     TextEditingController controller = TextEditingController(text: win.message);
