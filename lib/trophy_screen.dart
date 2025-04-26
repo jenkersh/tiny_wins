@@ -20,46 +20,41 @@ class TrophyScreen extends StatefulWidget {
 
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
-  Map<DateTime, TinyWin> winsByDate = {
-    // DateTime(2025, 2, 28): TinyWin(date: DateTime(2025, 2, 28), message: "Completed a new project task!"),
-    // DateTime(2025, 3, 1): TinyWin(date: DateTime(2025, 3, 1), message: "Completed a new project task!"),
-    // DateTime(2025, 4, 1): TinyWin(date: DateTime(2025, 4, 1), message: "Completed a new project task!"),
-    // DateTime(2025, 4, 2): TinyWin(date: DateTime(2025, 4, 2), message: "Woke up early and stretched."),
-    // DateTime(2025, 4, 3): TinyWin(date: DateTime(2025, 4, 3), message: "Cooked a healthy breakfast."),
-    // DateTime(2025, 4, 4): TinyWin(date: DateTime(2025, 4, 4), message: "Took a 30-minute walk today!"),
-    // DateTime(2025, 4, 5): TinyWin(date: DateTime(2025, 4, 5), message: "Ate a healthy lunch!"),
-    // DateTime(2025, 4, 6): TinyWin(date: DateTime(2025, 4, 6), message: "Read a chapter of a book!"),
-    // DateTime(2025, 4, 7): TinyWin(date: DateTime(2025, 4, 7), message: "Cleaned out an email inbox."),
-    // // DateTime(2025, 4, 8): TinyWin(date: DateTime(2025, 4, 8), message: "Listened to a podcast."),
-    // // DateTime(2025, 4, 9): TinyWin(date: DateTime(2025, 4, 9), message: "Tried a new recipe."),
-    // DateTime(2025, 4, 10): TinyWin(date: DateTime(2025, 4, 10), message: "Completed a workout session!"),
-    // DateTime(2025, 4, 11): TinyWin(date: DateTime(2025, 4, 11), message: "Called a friend just to say hi."),
-    // DateTime(2025, 4, 12): TinyWin(date: DateTime(2025, 4, 12), message: "Decluttered my workspace."),
-    // DateTime(2025, 4, 13): TinyWin(date: DateTime(2025, 4, 13), message: "Meditated for 10 minutes!"),
-    // DateTime(2025, 4, 14): TinyWin(date: DateTime(2025, 4, 14), message: "Had a productive workday!"),
-    // DateTime(2025, 4, 15): TinyWin(date: DateTime(2025, 4, 15), message: "Helped someone today."),
-    // DateTime(2025, 4, 16): TinyWin(date: DateTime(2025, 4, 16), message: "Took a mindful break."),
-    // DateTime(2025, 4, 17): TinyWin(date: DateTime(2025, 4, 17), message: "Organized my workspace!"),
-    // DateTime(2025, 4, 18): TinyWin(date: DateTime(2025, 4, 18), message: "Did something creative."),
-    // DateTime(2025, 4, 19): TinyWin(date: DateTime(2025, 4, 19), message: "Went screen-free for an hour."),
-    // DateTime(2025, 4, 20): TinyWin(date: DateTime(2025, 4, 20), message: "Took a break and stretched!"),
-    // DateTime(2025, 4, 21): TinyWin(date: DateTime(2025, 4, 21), message: "Drank enough water today."),
-    // DateTime(2025, 4, 22): TinyWin(date: DateTime(2025, 4, 22), message: "Learned something new today!"),
-    // DateTime(2025, 4, 23): TinyWin(date: DateTime(2025, 4, 23), message: "Wrote in my journal."),
-    // DateTime(2025, 4, 24): TinyWin(date: DateTime(2025, 4, 24), message: "Tidied up the living room."),
-    // DateTime(2025, 4, 25): TinyWin(date: DateTime(2025, 4, 25), message: "Watched a sunset."),
-    //
-    // DateTime(2025, 4, 27): TinyWin(date: DateTime(2025, 4, 27), message: "Planned something fun."),
-    // DateTime(2025, 4, 28): TinyWin(date: DateTime(2025, 4, 28), message: "Reflected on recent wins."),
-    // DateTime(2025, 4, 29): TinyWin(date: DateTime(2025, 4, 29), message: "Listened to my favorite song."),
-    // DateTime(2025, 4, 30): TinyWin(date: DateTime(2025, 4, 30), message: "Completed a challenging task at work!"),
-  };
+  Map<DateTime, TinyWin> winsByDate = {};
   final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
   void initState() {
     super.initState();
     _loadWins();
+  }
+
+  void _handleLogWinTap() {
+    final today = DateTime.now();
+    final todayKey = DateTime(today.year, today.month, today.day); // Normalize to ignore time
+
+    if (winsByDate.containsKey(todayKey)) {
+      // Already logged a win today
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Win Already Logged'),
+          content: const Text(
+            "You've already logged a win for today!\n\n"
+                "Press and hold today's trophy if you'd like to edit or delete it.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK', style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // No win today, allow user to log
+      _navigateToLogWinScreen();
+    }
   }
 
   void _showWinDialog(TinyWin win) {
@@ -250,13 +245,12 @@ class _TrophyScreenState extends State<TrophyScreen> {
         message: newMessage.trim(),
       );
 
-      // Update the win in the map
       setState(() {
-        // Update the win in the map and trigger a rebuild
-        winsByDate[win.date] = updatedWin;
+        // ✅ Normalize the date when updating the map
+        winsByDate[normalizeDate(win.date)] = updatedWin;
       });
 
-      // Save the updated wins list to shared preferences
+      // ✅ Save the updated wins list
       await TinyWinStorage.saveWins(winsByDate.values.toList());
     }
   }
@@ -573,6 +567,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
 
 
+  DateTime normalizeDate(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
   List<List<Widget>> _buildWeekRows(double cellWidth) {
     final year = _selectedMonth.year;
     final month = _selectedMonth.month;
@@ -588,10 +586,13 @@ class _TrophyScreenState extends State<TrophyScreen> {
       final List<Widget> week = [];
 
       for (int i = 0; i < 7; i++) {
-        if (current.month != month) {
+        final normalizedDate = normalizeDate(current);
+
+        if (normalizedDate.month != month) {
+          // Dates outside the current month
           week.add(SizedBox(width: cellWidth));
-        } else if (winsByDate[current] != null) {
-          final win = winsByDate[current]!;
+        } else if (winsByDate[normalizedDate] != null) {
+          final win = winsByDate[normalizedDate]!;
 
           week.add(
             GestureDetector(
@@ -633,6 +634,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
             ),
           );
         } else {
+          // Empty cell (no win)
           week.add(SizedBox(width: cellWidth));
         }
 
@@ -644,6 +646,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
     return weekRows;
   }
+
 
 
 
@@ -780,7 +783,39 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       await NotificationService().scheduleTestNotification();
                     },
                     child: Text('Test Notification'),
-                  )
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Clear All Wins?'),
+                          content: const Text('Are you sure you want to delete ALL your logged wins? This cannot be undone.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Delete All', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        setState(() {
+                          winsByDate.clear();
+                        });
+                        await TinyWinStorage.saveWins([]);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                    ),
+                    child: const Text('Clear All Wins'),
+                  ),
 
                 ],
               ),
@@ -788,9 +823,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToLogWinScreen,
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
+        child: FloatingActionButton.extended(
+          backgroundColor: const Color(0xFFA7D6E7),
+          onPressed: _handleLogWinTap, // 👈 call a method
+          label: Row(
+            children: [
+              const Icon(Icons.add),
+              const Text('Log Win!'),
+            ],
+          ),
+        ),
       ),
     );
   }
