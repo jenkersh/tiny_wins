@@ -134,7 +134,7 @@ class NotificationService {
     DateTime testTime = now.add(const Duration(seconds: 10));
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      9999, // 👈 Unique ID for test
       '🚀 Tiny Wins Test',
       'This is your test notification!',
       tz.TZDateTime.from(testTime, tz.local),
@@ -147,10 +147,13 @@ class NotificationService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
-      matchDateTimeComponents: DateTimeComponents.time,
+      // ❌ Remove uiLocalNotificationDateInterpretation and matchDateTimeComponents
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time, // This should suffice for daily time-based notifications
     );
 
     print('Scheduled test notification for 10 seconds from now.');
   }
+
+
 }

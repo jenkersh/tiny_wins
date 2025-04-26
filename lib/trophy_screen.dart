@@ -828,12 +828,17 @@ class _TrophyScreenState extends State<TrophyScreen> {
         padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
         child: FloatingActionButton.extended(
           backgroundColor: const Color(0xFFA7D6E7),
-          onPressed: _handleLogWinTap, // 👈 call a method
+          onPressed: _handleLogWinTap, // Call a method when pressed
           label: Row(
-            children: [
-              const Icon(Icons.add),
-              const Text('Log Win!'),
+            children: const [
+              Icon(Icons.add),
+              SizedBox(width: 5),
+              Text('Log Win!'),
+              SizedBox(width: 5),
             ],
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30), // Adjust the value to make the corners more rounded
           ),
         ),
       ),
