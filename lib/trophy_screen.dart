@@ -21,38 +21,38 @@ class TrophyScreen extends StatefulWidget {
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
   Map<DateTime, TinyWin> winsByDate = {
-    DateTime(2025, 2, 28): TinyWin(date: DateTime(2025, 2, 28), message: "Completed a new project task!"),
-    DateTime(2025, 3, 1): TinyWin(date: DateTime(2025, 3, 1), message: "Completed a new project task!"),
-    DateTime(2025, 4, 1): TinyWin(date: DateTime(2025, 4, 1), message: "Completed a new project task!"),
-    DateTime(2025, 4, 2): TinyWin(date: DateTime(2025, 4, 2), message: "Woke up early and stretched."),
-    DateTime(2025, 4, 3): TinyWin(date: DateTime(2025, 4, 3), message: "Cooked a healthy breakfast."),
-    DateTime(2025, 4, 4): TinyWin(date: DateTime(2025, 4, 4), message: "Took a 30-minute walk today!"),
-    DateTime(2025, 4, 5): TinyWin(date: DateTime(2025, 4, 5), message: "Ate a healthy lunch!"),
-    DateTime(2025, 4, 6): TinyWin(date: DateTime(2025, 4, 6), message: "Read a chapter of a book!"),
-    DateTime(2025, 4, 7): TinyWin(date: DateTime(2025, 4, 7), message: "Cleaned out an email inbox."),
-    // DateTime(2025, 4, 8): TinyWin(date: DateTime(2025, 4, 8), message: "Listened to a podcast."),
-    // DateTime(2025, 4, 9): TinyWin(date: DateTime(2025, 4, 9), message: "Tried a new recipe."),
-    DateTime(2025, 4, 10): TinyWin(date: DateTime(2025, 4, 10), message: "Completed a workout session!"),
-    DateTime(2025, 4, 11): TinyWin(date: DateTime(2025, 4, 11), message: "Called a friend just to say hi."),
-    DateTime(2025, 4, 12): TinyWin(date: DateTime(2025, 4, 12), message: "Decluttered my workspace."),
-    DateTime(2025, 4, 13): TinyWin(date: DateTime(2025, 4, 13), message: "Meditated for 10 minutes!"),
-    DateTime(2025, 4, 14): TinyWin(date: DateTime(2025, 4, 14), message: "Had a productive workday!"),
-    DateTime(2025, 4, 15): TinyWin(date: DateTime(2025, 4, 15), message: "Helped someone today."),
-    DateTime(2025, 4, 16): TinyWin(date: DateTime(2025, 4, 16), message: "Took a mindful break."),
-    DateTime(2025, 4, 17): TinyWin(date: DateTime(2025, 4, 17), message: "Organized my workspace!"),
-    DateTime(2025, 4, 18): TinyWin(date: DateTime(2025, 4, 18), message: "Did something creative."),
-    DateTime(2025, 4, 19): TinyWin(date: DateTime(2025, 4, 19), message: "Went screen-free for an hour."),
-    DateTime(2025, 4, 20): TinyWin(date: DateTime(2025, 4, 20), message: "Took a break and stretched!"),
-    DateTime(2025, 4, 21): TinyWin(date: DateTime(2025, 4, 21), message: "Drank enough water today."),
-    DateTime(2025, 4, 22): TinyWin(date: DateTime(2025, 4, 22), message: "Learned something new today!"),
-    DateTime(2025, 4, 23): TinyWin(date: DateTime(2025, 4, 23), message: "Wrote in my journal."),
-    DateTime(2025, 4, 24): TinyWin(date: DateTime(2025, 4, 24), message: "Tidied up the living room."),
-    DateTime(2025, 4, 25): TinyWin(date: DateTime(2025, 4, 25), message: "Watched a sunset."),
-
-    DateTime(2025, 4, 27): TinyWin(date: DateTime(2025, 4, 27), message: "Planned something fun."),
-    DateTime(2025, 4, 28): TinyWin(date: DateTime(2025, 4, 28), message: "Reflected on recent wins."),
-    DateTime(2025, 4, 29): TinyWin(date: DateTime(2025, 4, 29), message: "Listened to my favorite song."),
-    DateTime(2025, 4, 30): TinyWin(date: DateTime(2025, 4, 30), message: "Completed a challenging task at work!"),
+    // DateTime(2025, 2, 28): TinyWin(date: DateTime(2025, 2, 28), message: "Completed a new project task!"),
+    // DateTime(2025, 3, 1): TinyWin(date: DateTime(2025, 3, 1), message: "Completed a new project task!"),
+    // DateTime(2025, 4, 1): TinyWin(date: DateTime(2025, 4, 1), message: "Completed a new project task!"),
+    // DateTime(2025, 4, 2): TinyWin(date: DateTime(2025, 4, 2), message: "Woke up early and stretched."),
+    // DateTime(2025, 4, 3): TinyWin(date: DateTime(2025, 4, 3), message: "Cooked a healthy breakfast."),
+    // DateTime(2025, 4, 4): TinyWin(date: DateTime(2025, 4, 4), message: "Took a 30-minute walk today!"),
+    // DateTime(2025, 4, 5): TinyWin(date: DateTime(2025, 4, 5), message: "Ate a healthy lunch!"),
+    // DateTime(2025, 4, 6): TinyWin(date: DateTime(2025, 4, 6), message: "Read a chapter of a book!"),
+    // DateTime(2025, 4, 7): TinyWin(date: DateTime(2025, 4, 7), message: "Cleaned out an email inbox."),
+    // // DateTime(2025, 4, 8): TinyWin(date: DateTime(2025, 4, 8), message: "Listened to a podcast."),
+    // // DateTime(2025, 4, 9): TinyWin(date: DateTime(2025, 4, 9), message: "Tried a new recipe."),
+    // DateTime(2025, 4, 10): TinyWin(date: DateTime(2025, 4, 10), message: "Completed a workout session!"),
+    // DateTime(2025, 4, 11): TinyWin(date: DateTime(2025, 4, 11), message: "Called a friend just to say hi."),
+    // DateTime(2025, 4, 12): TinyWin(date: DateTime(2025, 4, 12), message: "Decluttered my workspace."),
+    // DateTime(2025, 4, 13): TinyWin(date: DateTime(2025, 4, 13), message: "Meditated for 10 minutes!"),
+    // DateTime(2025, 4, 14): TinyWin(date: DateTime(2025, 4, 14), message: "Had a productive workday!"),
+    // DateTime(2025, 4, 15): TinyWin(date: DateTime(2025, 4, 15), message: "Helped someone today."),
+    // DateTime(2025, 4, 16): TinyWin(date: DateTime(2025, 4, 16), message: "Took a mindful break."),
+    // DateTime(2025, 4, 17): TinyWin(date: DateTime(2025, 4, 17), message: "Organized my workspace!"),
+    // DateTime(2025, 4, 18): TinyWin(date: DateTime(2025, 4, 18), message: "Did something creative."),
+    // DateTime(2025, 4, 19): TinyWin(date: DateTime(2025, 4, 19), message: "Went screen-free for an hour."),
+    // DateTime(2025, 4, 20): TinyWin(date: DateTime(2025, 4, 20), message: "Took a break and stretched!"),
+    // DateTime(2025, 4, 21): TinyWin(date: DateTime(2025, 4, 21), message: "Drank enough water today."),
+    // DateTime(2025, 4, 22): TinyWin(date: DateTime(2025, 4, 22), message: "Learned something new today!"),
+    // DateTime(2025, 4, 23): TinyWin(date: DateTime(2025, 4, 23), message: "Wrote in my journal."),
+    // DateTime(2025, 4, 24): TinyWin(date: DateTime(2025, 4, 24), message: "Tidied up the living room."),
+    // DateTime(2025, 4, 25): TinyWin(date: DateTime(2025, 4, 25), message: "Watched a sunset."),
+    //
+    // DateTime(2025, 4, 27): TinyWin(date: DateTime(2025, 4, 27), message: "Planned something fun."),
+    // DateTime(2025, 4, 28): TinyWin(date: DateTime(2025, 4, 28), message: "Reflected on recent wins."),
+    // DateTime(2025, 4, 29): TinyWin(date: DateTime(2025, 4, 29), message: "Listened to my favorite song."),
+    // DateTime(2025, 4, 30): TinyWin(date: DateTime(2025, 4, 30), message: "Completed a challenging task at work!"),
   };
   final ScreenshotController _screenshotController = ScreenshotController();
 
@@ -61,6 +61,189 @@ class _TrophyScreenState extends State<TrophyScreen> {
     super.initState();
     _loadWins();
   }
+
+  void _showWinDialog(TinyWin win) {
+    final formattedDate = DateFormat.yMMMMd().format(win.date);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => Confetti(
+        child: Stack(
+          children: [
+            AlertDialog(
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(30),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    children: [
+                      Material(
+                        color: Colors.transparent,
+                        child: SpeechBubble(
+                          nipLocation: NipLocation.BOTTOM,
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: 12,
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "On ${DateFormat('MMMM d').format(win.date)}, you logged: \n",
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                ),
+                                TextSpan(
+                                  text: win.message,
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                ),
+                                const TextSpan(
+                                  text: "\n That was great!",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Image.asset('images/mascot.png', height: 120),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ShareButton(
+                    context: context,
+                    winText: win.message,
+                    screenshotController: _screenshotController,
+                    screenshotContainer: buildScreenshotContainer(win.message),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.pop(context);
+                },
+                child: const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.black26,
+                  child: Icon(Icons.close, size: 20, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditDeleteDialog(TinyWin win) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit or Delete Win'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start, // 👈 makes the text left-aligned
+          children: [
+            const Text('Choose an option below!'),
+            const SizedBox(height: 20),
+            Center( // 👈 center just the buttons
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _editWin(win);
+                    },
+                    child: Text('Edit', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                  ),
+                  const SizedBox(width: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _deleteWin(win);
+                    },
+                    child: const Text('Delete', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                  ),
+                  const SizedBox(width: 10),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange,fontSize: 16)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _editWin(TinyWin win) async {
+    TextEditingController controller = TextEditingController(text: win.message);
+
+    final newMessage = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Win'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 100,
+          decoration: InputDecoration(
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear, size: 24),
+              onPressed: () {
+                controller.clear(); // Clears the text
+              },
+            ),
+            hintText: 'Edit your tiny win...',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text('Save', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+          ),
+        ],
+      ),
+    );
+
+    if (newMessage != null && newMessage.trim().isNotEmpty) {
+      final updatedWin = TinyWin(
+        date: win.date,
+        message: newMessage.trim(),
+      );
+
+      // Update the win in the map
+      setState(() {
+        // Update the win in the map and trigger a rebuild
+        winsByDate[win.date] = updatedWin;
+      });
+
+      // Save the updated wins list to shared preferences
+      await TinyWinStorage.saveWins(winsByDate.values.toList());
+    }
+  }
+
+
+  void _deleteWin(TinyWin win) async {
+    winsByDate.remove(win.date);
+    await TinyWinStorage.saveWins(winsByDate.values.toList());
+    setState(() {});
+  }
+
 
 
   void _loadWins() async {
@@ -126,6 +309,19 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   Widget buildScreenshotContainer(String winText) {
+    // Clean up winText to remove trailing punctuation if any
+    String cleanedWinText = winText.trim();
+    if (cleanedWinText.isNotEmpty &&
+        (cleanedWinText.endsWith('.') ||
+            cleanedWinText.endsWith('!') ||
+            cleanedWinText.endsWith(',') ||
+            cleanedWinText.endsWith('?'))) {
+      cleanedWinText = cleanedWinText.substring(0, cleanedWinText.length - 1);
+    }
+
+    // Determine text size based on length
+    double textFontSize = cleanedWinText.length > 50 ? 20 : 24;
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -147,25 +343,27 @@ class _TrophyScreenState extends State<TrophyScreen> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // const Text(
-                  //   '🏆 Tiny Win!',
-                  //   style: TextStyle(
-                  //     fontSize: 26,
-                  //     fontWeight: FontWeight.bold,
-                  //     color: Colors.brown,
-                  //   ),
-                  // ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'I $winText and all I got was this trophy!',
+                  RichText(
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      //fontStyle: FontStyle.italic,
-                      color: Colors.black87,
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: textFontSize,
+                        color: Colors.black87,
+                      ),
+                      children: [
+                        const TextSpan(text: 'I '),
+                        TextSpan(
+                          text: cleanedWinText,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const TextSpan(text: ' and all I got was this trophy!'),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+
+                  //const SizedBox(height: 10),
                   // Mascot image with slight rotation
                   Transform.rotate(
                     angle: -0.1, // Slight rotation for fun
@@ -187,18 +385,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Made with ❤️', style: TextStyle(fontSize: 10)),
-              Text('Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+              Text('Gratitude Journal: Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
 
         // App Store logo in the bottom-right corner
         Positioned(
-          bottom: 10,
+          bottom: 20,
           right: 10,
           child: Image.asset(
             'images/app_store.png',
-            height: 40,
+            height: 20,
           ),
         ),
       ],
@@ -357,7 +555,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
     final firstDayOfMonth = DateTime(year, month, 1);
     final lastDayOfMonth = DateTime(year, month + 1, 0);
 
-    // Determine the first visible day (start of the calendar grid)
     final int startOffset = firstDayOfMonth.weekday % 7; // Sunday = 0
     DateTime current = firstDayOfMonth.subtract(Duration(days: startOffset));
 
@@ -368,124 +565,48 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
       for (int i = 0; i < 7; i++) {
         if (current.month != month) {
-          // Fill in blank spaces for days outside current month
           week.add(SizedBox(width: cellWidth));
         } else if (winsByDate[current] != null) {
           final win = winsByDate[current]!;
-          week.add(
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  final formattedDate = DateFormat.yMMMMd().format(current); // e.g. April 4, 2025
 
-                  showDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (_) => Confetti(
-                      child: Stack(
-                        children: [
-                          AlertDialog(
-                            elevation: 0,
-                            contentPadding: const EdgeInsets.all(30),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Column(
-                                  children: [
-                                    Material(
-                                      color: Colors.transparent,
-                                      child: SpeechBubble(
-                                        nipLocation: NipLocation.BOTTOM,
-                                        color: Theme.of(context).colorScheme.surface,
-                                        borderRadius: 12,
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "On ${DateFormat('MMMM d').format(win.date)}, you logged: \n",
-                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                                              ),
-                                              TextSpan(
-                                                text: win.message,
-                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                              ),
-                                              const TextSpan(
-                                                text: "\n That was great!",
-                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                                              ),
-                                            ],
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Image.asset(
-                                      'images/mascot.png',
-                                      height: 120,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                ShareButton(
-                                  context: context,
-                                  winText: win.message,
-                                  screenshotController: _screenshotController,
-                                  screenshotContainer: buildScreenshotContainer(win.message),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: GestureDetector(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                Navigator.pop(context);
-                              },
-                              child: const CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Colors.black26,
-                                child: Icon(Icons.close, size: 20, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+          week.add(
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                _showWinDialog(win);
+              },
+              onLongPress: () {
+                HapticFeedback.heavyImpact();
+                _showEditDeleteDialog(win);
+              },
+              child: Container(
+                width: cellWidth,
+                height: cellWidth,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      bottom: cellWidth * -0.1,
+                      child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth),
                     ),
-                  );
-                },
-                child: Container(
-                  width: cellWidth,
-                  height: cellWidth,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        bottom: cellWidth * -0.1,
-                        child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth),
-                      ),
-                      Positioned(
-                        bottom: cellWidth * 0.32,
-                        child: Text(
-                          '${current.day}',
-                          style: TextStyle(
-                            fontSize: cellWidth * 0.3,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            shadows: [
-                              Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.white),
-                            ],
-                          ),
+                    Positioned(
+                      bottom: cellWidth * 0.32,
+                      child: Text(
+                        '${current.day}',
+                        style: TextStyle(
+                          fontSize: cellWidth * 0.3,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          shadows: [
+                            Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.white),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-
+              ),
+            ),
           );
         } else {
           week.add(SizedBox(width: cellWidth));
@@ -499,6 +620,8 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
     return weekRows;
   }
+
+
 
 
   List<Widget> _buildTrophyShelves(List<List<Widget>> weekRows, double cellWidth) {
@@ -567,6 +690,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           double totalWidth = constraints.maxWidth - 80; // 40 padding each side

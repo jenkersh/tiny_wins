@@ -147,7 +147,7 @@ class _LogScreenState extends State<LogScreen> {
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 4,
-                      maxLength: 200,
+                      maxLength: 100,
                     ),
                   ],
                 ),
