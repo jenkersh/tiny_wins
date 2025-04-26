@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:speech_bubble/speech_bubble.dart';
+import 'package:tiny_wins/notification_service.dart';
 import 'package:tiny_wins/share_button.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
 import 'log_screen.dart';
@@ -47,7 +48,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
     DateTime(2025, 4, 23): TinyWin(date: DateTime(2025, 4, 23), message: "Wrote in my journal."),
     DateTime(2025, 4, 24): TinyWin(date: DateTime(2025, 4, 24), message: "Tidied up the living room."),
     DateTime(2025, 4, 25): TinyWin(date: DateTime(2025, 4, 25), message: "Watched a sunset."),
-    DateTime(2025, 4, 26): TinyWin(date: DateTime(2025, 4, 26), message: "Laughed really hard today."),
+
     DateTime(2025, 4, 27): TinyWin(date: DateTime(2025, 4, 27), message: "Planned something fun."),
     DateTime(2025, 4, 28): TinyWin(date: DateTime(2025, 4, 28), message: "Reflected on recent wins."),
     DateTime(2025, 4, 29): TinyWin(date: DateTime(2025, 4, 29), message: "Listened to my favorite song."),
@@ -60,6 +61,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
     super.initState();
     _loadWins();
   }
+
 
   void _loadWins() async {
     final savedWins = await TinyWinStorage.loadWins();
@@ -127,11 +129,17 @@ class _TrophyScreenState extends State<TrophyScreen> {
     return Stack(
       alignment: Alignment.center,
       children: [
+        // Background container
         Container(
-          color: Colors.white,
-          alignment: Alignment.center,
           height: 400,
           width: 400,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/screenshot_background.png'),
+              fit: BoxFit.fill,
+            ),
+          ),
+          alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -139,34 +147,40 @@ class _TrophyScreenState extends State<TrophyScreen> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    '🏆 Tiny Win!',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.brown,
-                    ),
-                  ),
+                  // const Text(
+                  //   '🏆 Tiny Win!',
+                  //   style: TextStyle(
+                  //     fontSize: 26,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Colors.brown,
+                  //   ),
+                  // ),
                   const SizedBox(height: 12),
                   Text(
-                    '"$winText"',
+                    'I $winText and all I got was this trophy!',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontStyle: FontStyle.italic,
+                      fontSize: 24,
+                      //fontStyle: FontStyle.italic,
                       color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Image.asset(
-                    'images/mascot.png',
-                    height: 80,
+                  // Mascot image with slight rotation
+                  Transform.rotate(
+                    angle: -0.1, // Slight rotation for fun
+                    child: Image.asset(
+                      'images/mascot.png',
+                      height: 160,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
+
+        // Bottom text (App name)
         const Positioned(
           bottom: 20,
           child: Column(
@@ -177,10 +191,19 @@ class _TrophyScreenState extends State<TrophyScreen> {
             ],
           ),
         ),
+
+        // App Store logo in the bottom-right corner
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: Image.asset(
+            'images/app_store.png',
+            height: 40,
+          ),
+        ),
       ],
     );
   }
-
 
   void _showConfettiDialog(String winText, int streakCount) {
     showDialog(
@@ -604,6 +627,13 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       }),
                     ),
                   ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await NotificationService().scheduleTestNotification();
+                    },
+                    child: Text('Test Notification'),
+                  )
+
                 ],
               ),
             ),
