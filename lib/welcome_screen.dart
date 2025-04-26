@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'package:tiny_wins/trophy_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -10,8 +11,44 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool _isFirstLaunch = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstLaunch();
+  }
+
+  // Check if it's the user's first time opening the app
+  _checkFirstLaunch() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isFirstLaunch = prefs.getBool('isFirstLaunch');
+
+    if (isFirstLaunch == null || isFirstLaunch) {
+      setState(() {
+        _isFirstLaunch = true;
+      });
+    } else {
+      // Navigate directly to the TrophyScreen if not the first launch
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TrophyScreen()),
+      );
+    }
+  }
+
+  // Update the flag to indicate that the welcome screen has been shown
+  _setFirstLaunchFlag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstLaunch', false);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_isFirstLaunch) {
+      return SizedBox.shrink(); // Return an empty widget if it's not the first launch
+    }
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -83,23 +120,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ],
                 ),
-
-
                 const Expanded(
                   flex: 8, // Proportional spacing in the middle
                   child: SizedBox(),
                 ),
                 Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                      backgroundColor: Color(0xFFA7D6E7),
                       minimumSize: const Size(double.infinity, 50),
                       elevation: 10,
                     ),
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      Navigator.push(
+                      _setFirstLaunchFlag(); // Set the flag after the user taps "Let's Go"
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => TrophyScreen()),
                       );
@@ -141,4 +177,3 @@ class CloudClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
-

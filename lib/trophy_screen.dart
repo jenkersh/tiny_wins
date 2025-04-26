@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_bubble/speech_bubble.dart';
 import 'package:tiny_wins/notification_service.dart';
 import 'package:tiny_wins/share_button.dart';
@@ -52,6 +53,39 @@ class _TrophyScreenState extends State<TrophyScreen> {
   void initState() {
     super.initState();
     _loadWins();
+    _checkAndShowWelcomeDialog();
+  }
+
+  // Check if the user has seen the welcome dialog and show it if not
+  _checkAndShowWelcomeDialog() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? hasSeenDialog = prefs.getBool('hasSeenTrophyDialog');
+
+    if (hasSeenDialog == null || hasSeenDialog == false) {
+      _showWelcomeDialog();
+      prefs.setBool('hasSeenTrophyDialog', true); // Update the flag to prevent future dialogs
+    }
+  }
+
+  // Show the welcome dialog
+  _showWelcomeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Welcome to your trophy collection!"),
+          content: Text("Your shelves are empty. Hit the 'Log Win' button to win your first trophy."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Got it!", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _handleLogWinTap() {
