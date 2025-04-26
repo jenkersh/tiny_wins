@@ -147,7 +147,7 @@ class _LogScreenState extends State<LogScreen> {
                                   .map((text) => TypewriterAnimatedText(
                                 text,
                                 textStyle: TextStyle(
-                                  color: Colors.grey.shade500,
+                                  color: Colors.grey.shade700,
                                   fontSize: 16,
                                 ),
                                 speed: const Duration(milliseconds: 30),
@@ -163,23 +163,34 @@ class _LogScreenState extends State<LogScreen> {
                       TextField(
                         controller: _controller,
                         focusNode: _focusNode,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          filled: true, // This enables the background color
+                          fillColor: Colors.white.withOpacity(0.2), // Adjust opacity (0.1 for 10% opacity)
                           border: OutlineInputBorder(),
                         ),
                         maxLines: 4,
                         maxLength: 100,
-                      ),
+                      )
+
                     ],
                   ),
                   const SizedBox(height: 30),
                   Center(
                     child: ElevatedButton(
                       onPressed: _submitWin,
+                      style: ElevatedButton.styleFrom(
+                        elevation: 5,
+                        backgroundColor: Color(0xFFA7D6E7), // Set the background color// Set the text (foreground) color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30), // Optional: Rounded corners
+                        ),
+                      ),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         child: Text('Hooray! 🎉', style: TextStyle(fontSize: 18)),
                       ),
-                    ),
+                    )
+
                   ),
                 ],
               ),

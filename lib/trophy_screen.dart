@@ -20,7 +20,32 @@ class TrophyScreen extends StatefulWidget {
 
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
-  Map<DateTime, TinyWin> winsByDate = {};
+  Map<DateTime, TinyWin> winsByDate = {
+    DateTime(2025, 4, 1): TinyWin(
+      date: DateTime(2025, 4, 1),
+      message: "Had a productive morning 🌞",
+    ),
+    DateTime(2025, 4, 5): TinyWin(
+      date: DateTime(2025, 4, 5),
+      message: "Finished a great book 📚",
+    ),
+    DateTime(2025, 4, 12): TinyWin(
+      date: DateTime(2025, 4, 12),
+      message: "Completed a 5K run 🏃‍♂️",
+    ),
+    DateTime(2025, 4, 15): TinyWin(
+      date: DateTime(2025, 4, 15),
+      message: "Tried a new recipe 🍳",
+    ),
+    DateTime(2025, 4, 20): TinyWin(
+      date: DateTime(2025, 4, 20),
+      message: "Spent quality time with family ❤️",
+    ),
+    DateTime(2025, 4, 25): TinyWin(
+      date: DateTime(2025, 4, 25),
+      message: "Finished a work project ahead of time 💼",
+    ),
+  };
   final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
@@ -449,7 +474,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                             TextSpan(
                               children: [
                                 const TextSpan(
-                                  text: "Congratulations! I'd be proud if I ",
+                                  text: "Congratulations! I'd be psyched if I ",
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                                 ),
                                 TextSpan(
@@ -613,7 +638,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   children: [
                     Positioned(
                       bottom: cellWidth * -0.1,
-                      child: Icon(Icons.emoji_events, color: Colors.amber, size: cellWidth),
+                      child: Icon(Icons.emoji_events, color: Colors.amber.shade800, size: cellWidth),
                     ),
                     Positioned(
                       bottom: cellWidth * 0.32,
@@ -779,44 +804,44 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       }),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await NotificationService().scheduleTestNotification();
-                    },
-                    child: Text('Test Notification'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final confirm = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Clear All Wins?'),
-                          content: const Text('Are you sure you want to delete ALL your logged wins? This cannot be undone.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Delete All', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
-                            ),
-                          ],
-                        ),
-                      );
-
-                      if (confirm == true) {
-                        setState(() {
-                          winsByDate.clear();
-                        });
-                        await TinyWinStorage.saveWins([]);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                    ),
-                    child: const Text('Clear All Wins'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await NotificationService().scheduleTestNotification();
+                  //   },
+                  //   child: Text('Test Notification'),
+                  // ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     final confirm = await showDialog<bool>(
+                  //       context: context,
+                  //       builder: (context) => AlertDialog(
+                  //         title: const Text('Clear All Wins?'),
+                  //         content: const Text('Are you sure you want to delete ALL your logged wins? This cannot be undone.'),
+                  //         actions: [
+                  //           TextButton(
+                  //             onPressed: () => Navigator.pop(context, false),
+                  //             child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+                  //           ),
+                  //           TextButton(
+                  //             onPressed: () => Navigator.pop(context, true),
+                  //             child: const Text('Delete All', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     );
+                  //
+                  //     if (confirm == true) {
+                  //       setState(() {
+                  //         winsByDate.clear();
+                  //       });
+                  //       await TinyWinStorage.saveWins([]);
+                  //     }
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.redAccent,
+                  //   ),
+                  //   child: const Text('Clear All Wins'),
+                  // ),
 
                 ],
               ),
@@ -825,7 +850,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
+        padding: const EdgeInsets.only(bottom: 15.0, right: 10.0),
         child: FloatingActionButton.extended(
           backgroundColor: const Color(0xFFA7D6E7),
           onPressed: _handleLogWinTap, // Call a method when pressed
