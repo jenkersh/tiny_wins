@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/services.dart';
+import 'package:tiny_wins/notification_service.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -25,7 +27,8 @@ class _LogScreenState extends State<LogScreen> {
   bool get _showSuggestions =>
       !_focusNode.hasFocus && _controller.text.isEmpty;
 
-  void _submitWin() {
+  void _submitWin() async {
+    HapticFeedback.mediumImpact();
     final winText = _controller.text.trim();
     final encouragements = [
       "Enter a win in the box! I know you can think of something that went well today.",
@@ -53,6 +56,7 @@ class _LogScreenState extends State<LogScreen> {
       );
       return;
     }
+    await NotificationService().cancelAllNotifications();
 
     Navigator.pop(context, winText);
   }
