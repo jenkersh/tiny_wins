@@ -272,18 +272,22 @@ class _TrophyScreenState extends State<TrophyScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Edit Win'),
         content: TextField(
+          decoration: InputDecoration(
+            filled: true, // This enables the background color
+            fillColor: Colors.white.withOpacity(0.2), // Adjust opacity (0.1 for 10% opacity)
+            border: OutlineInputBorder(),
+            // suffixIcon: IconButton(
+            //       icon: const Icon(Icons.clear, size: 24),
+            //       onPressed: () {
+            //         controller.clear(); // Clears the text
+            //       },
+            //     ),
+              hintText: 'Edit your tiny win...',
+          ),
+          maxLines: 4,
           controller: controller,
           autofocus: true,
           maxLength: 100,
-          decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.clear, size: 24),
-              onPressed: () {
-                controller.clear(); // Clears the text
-              },
-            ),
-            hintText: 'Edit your tiny win...',
-          ),
         ),
         actions: [
           TextButton(

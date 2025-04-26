@@ -174,7 +174,7 @@ class _LogScreenState extends State<LogScreen> {
 
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
                       onPressed: _submitWin,
