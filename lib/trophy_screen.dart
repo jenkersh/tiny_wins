@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:speech_bubble/speech_bubble.dart';
 import 'package:tiny_wins/share_button.dart';
@@ -71,12 +72,14 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
 
   void _goToPreviousMonth() {
+    HapticFeedback.selectionClick();
     setState(() {
       _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month - 1);
     });
   }
 
   void _goToNextMonth() {
+    HapticFeedback.selectionClick();
     setState(() {
       _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1);
     });
@@ -92,6 +95,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
 
   Future<void> _navigateToLogWinScreen() async {
+    HapticFeedback.lightImpact();
     final winText = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const LogScreen()),
@@ -246,6 +250,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
               right: 8,
               child: GestureDetector(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   Navigator.pop(context);
                   if (streakCount >= 1) {
                     _showStreakDialog(streakCount);
@@ -304,7 +309,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
               top: 8,
               right: 8,
               child: GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  Navigator.pop(context);
+                  HapticFeedback.lightImpact();
+                },
                 child: const CircleAvatar(
                   radius: 24,
                   backgroundColor: Colors.black26,
@@ -344,6 +352,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
           week.add(
               GestureDetector(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   final formattedDate = DateFormat.yMMMMd().format(current); // e.g. April 4, 2025
 
                   showDialog(
@@ -409,7 +418,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
                             top: 8,
                             right: 8,
                             child: GestureDetector(
-                              onTap: () => Navigator.pop(context),
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                Navigator.pop(context);
+                              },
                               child: const CircleAvatar(
                                 radius: 24,
                                 backgroundColor: Colors.black26,
