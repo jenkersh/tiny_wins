@@ -578,9 +578,9 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   void _showConfettiDialog(String winText, int streakCount) {
-    showDialog(
+    showDialog<bool>(
       context: context,
-      barrierDismissible: true, // Allow dismissing the dialog by tapping outside
+      barrierDismissible: true,
       builder: (_) => Confetti(
         child: Stack(
           children: [
@@ -591,7 +591,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Speech bubble + mascot
                   Column(
                     children: [
                       Material(
@@ -638,17 +637,13 @@ class _TrophyScreenState extends State<TrophyScreen> {
                 ],
               ),
             ),
-            // Close icon in the corner
             Positioned(
               top: 8,
               right: 8,
               child: GestureDetector(
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                  if (streakCount >= 1) {
-                    _showStreakDialog(streakCount); // Show streak dialog after close button tap
-                  }
+                  Navigator.pop(context, true); // User tapped close button
                 },
                 child: const CircleAvatar(
                   radius: 24,
@@ -661,7 +656,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
         ),
       ),
     ).then((_) {
-      // If the user dismisses the dialog by tapping outside, trigger the streak dialog
+      // Always show streak dialog after confetti dialog dismissed, no matter how
       if (streakCount >= 1) {
         _showStreakDialog(streakCount);
       }
@@ -669,7 +664,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   void _showStreakDialog(int streakCount) {
-    showDialog(
+    showDialog<bool>(
       context: context,
       barrierDismissible: true, // Allow dismissing the dialog by tapping outside
       builder: (_) => Confetti(
@@ -709,9 +704,8 @@ class _TrophyScreenState extends State<TrophyScreen> {
               right: 8,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context); // Close the dialog when the close button is pressed
                   HapticFeedback.lightImpact();
-                  _checkAndPromptReview(); // Check and prompt for review after closing the dialog
+                  Navigator.pop(context); // Just close, no review prompt here
                 },
                 child: const CircleAvatar(
                   radius: 24,
@@ -723,9 +717,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
           ],
         ),
       ),
-    ).then((_) {
-      // If the user dismisses the dialog by tapping outside, it will also trigger the review check
-      _checkAndPromptReview(); // Trigger after dismissing dialog
+    ).then((_) async {
+      // Add a slight delay before prompting for review
+      await Future.delayed(const Duration(milliseconds: 300));
+      _checkAndPromptReview();
     });
   }
 
