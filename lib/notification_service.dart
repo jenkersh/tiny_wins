@@ -129,31 +129,31 @@ class NotificationService {
   }
 
   // Test notification (for testing purposes)
-  Future<void> scheduleTestNotification() async {
-    DateTime now = DateTime.now();
-    DateTime testTime = now.add(const Duration(seconds: 10));
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      9999, // 👈 Unique ID for test
-      '🚀 Tiny Wins Test',
-      'This is your test notification!',
-      tz.TZDateTime.from(testTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_win_channel',
-          'Daily Win Reminder',
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      // ❌ Remove uiLocalNotificationDateInterpretation and matchDateTimeComponents
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time, // This should suffice for daily time-based notifications
-    );
-
-    print('Scheduled test notification for 10 seconds from now.');
-  }
+  // Future<void> scheduleTestNotification() async {
+  //   DateTime now = DateTime.now();
+  //   DateTime testTime = now.add(const Duration(seconds: 10));
+  //
+  //   await flutterLocalNotificationsPlugin.zonedSchedule(
+  //     9999, // 👈 Unique ID for test
+  //     '🚀 Tiny Wins Test',
+  //     'This is your test notification!',
+  //     tz.TZDateTime.from(testTime, tz.local),
+  //     const NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         'daily_win_channel',
+  //         'Daily Win Reminder',
+  //         importance: Importance.high,
+  //         priority: Priority.high,
+  //       ),
+  //       iOS: DarwinNotificationDetails(),
+  //     ),
+  //     // ❌ Remove uiLocalNotificationDateInterpretation and matchDateTimeComponents
+  //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  //     matchDateTimeComponents: DateTimeComponents.time, // This should suffice for daily time-based notifications
+  //   );
+  //
+  //   print('Scheduled test notification for 10 seconds from now.');
+  // }
 
 
 }
