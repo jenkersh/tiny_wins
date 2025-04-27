@@ -24,7 +24,39 @@ class TrophyScreen extends StatefulWidget {
 
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
-  Map<DateTime, TinyWin> winsByDate = {};
+  Map<DateTime, TinyWin> winsByDate = {
+    // DateTime(2025, 5, 1): TinyWin(date: DateTime(2025, 5, 1), message: 'Finished a big project! 🎯'),
+    // DateTime(2025, 5, 2): TinyWin(date: DateTime(2025, 5, 2), message: 'Went for a run 🏃‍♂️'),
+    // DateTime(2025, 5, 3): TinyWin(date: DateTime(2025, 5, 3), message: 'Helped a friend move 📦'),
+    // DateTime(2025, 5, 4): TinyWin(date: DateTime(2025, 5, 4), message: 'Read a full book 📚'),
+    // DateTime(2025, 5, 5): TinyWin(date: DateTime(2025, 5, 5), message: 'Cooked a new recipe 🍝'),
+    // DateTime(2025, 5, 6): TinyWin(date: DateTime(2025, 5, 6), message: 'Started learning Spanish 🇪🇸'),
+    // DateTime(2025, 5, 7): TinyWin(date: DateTime(2025, 5, 7), message: 'Cleaned my whole apartment 🧹'),
+    // DateTime(2025, 5, 8): TinyWin(date: DateTime(2025, 5, 8), message: 'Had a great meeting at work 👩‍💻'),
+    // DateTime(2025, 5, 9): TinyWin(date: DateTime(2025, 5, 9), message: 'Donated to a charity ❤️'),
+    // DateTime(2025, 5, 10): TinyWin(date: DateTime(2025, 5, 10), message: 'Painted a landscape 🖼️'),
+    // DateTime(2025, 5, 11): TinyWin(date: DateTime(2025, 5, 11), message: 'Meditated for 20 minutes 🧘‍♀️'),
+    // DateTime(2025, 5, 12): TinyWin(date: DateTime(2025, 5, 12), message: 'Planted a garden 🌱'),
+    // // DateTime(2025, 5, 13): TinyWin(date: DateTime(2025, 5, 13), message: 'Completed a workout challenge 💪'),
+    // DateTime(2025, 5, 14): TinyWin(date: DateTime(2025, 5, 14), message: 'Caught up with an old friend ☎️'),
+    // DateTime(2025, 5, 15): TinyWin(date: DateTime(2025, 5, 15), message: 'Fixed my bike 🚲'),
+    // DateTime(2025, 5, 16): TinyWin(date: DateTime(2025, 5, 16), message: 'Wrote in my journal 📓'),
+    // DateTime(2025, 5, 17): TinyWin(date: DateTime(2025, 5, 17), message: 'Tried a new restaurant 🍣'),
+    // DateTime(2025, 5, 18): TinyWin(date: DateTime(2025, 5, 18), message: 'Watched an inspiring documentary 🎥'),
+    // DateTime(2025, 5, 19): TinyWin(date: DateTime(2025, 5, 19), message: 'Helped someone at the grocery store 🛒'),
+    // DateTime(2025, 5, 20): TinyWin(date: DateTime(2025, 5, 20), message: 'Organized my closet 👕'),
+    // // DateTime(2025, 5, 21): TinyWin(date: DateTime(2025, 5, 21), message: 'Practiced guitar 🎸'),
+    // DateTime(2025, 5, 22): TinyWin(date: DateTime(2025, 5, 22), message: 'Volunteered for a local event 👐'),
+    // DateTime(2025, 5, 23): TinyWin(date: DateTime(2025, 5, 23), message: 'Learned a magic trick ✨'),
+    // DateTime(2025, 5, 24): TinyWin(date: DateTime(2025, 5, 24), message: 'Went hiking 🥾'),
+    // DateTime(2025, 5, 25): TinyWin(date: DateTime(2025, 5, 25), message: 'Took an online class 🎓'),
+    // DateTime(2025, 5, 26): TinyWin(date: DateTime(2025, 5, 26), message: 'Made homemade ice cream 🍦'),
+    // DateTime(2025, 5, 27): TinyWin(date: DateTime(2025, 5, 27), message: 'Drew a comic strip ✏️'),
+    // DateTime(2025, 5, 28): TinyWin(date: DateTime(2025, 5, 28), message: 'Fixed a leaky faucet 🔧'),
+    // DateTime(2025, 5, 29): TinyWin(date: DateTime(2025, 5, 29), message: 'Wrote a thank-you note 💌'),
+    // // DateTime(2025, 5, 30): TinyWin(date: DateTime(2025, 5, 30), message: 'Learned a new dance move 💃'),
+    // // DateTime(2025, 5, 31): TinyWin(date: DateTime(2025, 5, 31), message: 'Had a perfect chill day 😌'),
+  };
   final ScreenshotController _screenshotController = ScreenshotController();
   final InAppReview _inAppReview = InAppReview.instance;
 
@@ -42,8 +74,8 @@ class _TrophyScreenState extends State<TrophyScreen> {
     // bool hasRated = prefs.getBool('has_rated') ?? false;
     // print(hasRated);// Get the number of wins
 
-    if (winCount == 1) {
-      // Prompt for a review after the first win
+    if (winCount == 2) {
+      // Prompt for a review after the second win
       _requestReview();
     } else if (winCount % 10 == 0) {
       // Every 10 wins after the first, prompt for a review
@@ -90,9 +122,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                HapticFeedback.lightImpact();
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text("Close", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+              child:
+                  Text("Close", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -122,9 +156,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                HapticFeedback.lightImpact();
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text("Got it!", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text("Got it!",
+                  style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -144,12 +180,16 @@ class _TrophyScreenState extends State<TrophyScreen> {
           title: const Text('Win Already Logged'),
           content: const Text(
             "You've already logged a win for today!\n\n"
-                "Press and hold today's trophy if you'd like to edit or delete it.",
+            "Press and hold today's trophy if you'd like to edit or delete it.",
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK', style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                Navigator.pop(context);
+              },
+              child: const Text('OK',
+                  style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -257,6 +297,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
+                      HapticFeedback.lightImpact();
                       Navigator.pop(context);
                       _editWin(win);
                     },
@@ -265,6 +306,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: () {
+                      HapticFeedback.lightImpact();
                       Navigator.pop(context);
                       _confirmDeleteWin(win); // Show confirmation before deleting
                     },
@@ -272,7 +314,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   ),
                   const SizedBox(width: 10),
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
                     child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
                   ),
                 ],
@@ -293,20 +338,24 @@ class _TrophyScreenState extends State<TrophyScreen> {
         actions: [
           TextButton(
             onPressed: () {
+              HapticFeedback.lightImpact();
               Navigator.pop(context); // Close confirm dialog
               _deleteWin(win); // Actually delete
             },
-            child: const Text('Yes, Delete', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold)),
+            child: const Text('Yes, Delete',
+                style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context), // Just close confirm dialog
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pop(context);
+            }, // Just close confirm dialog
             child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
           ),
         ],
       ),
     );
   }
-
 
   void _editWin(TinyWin win) async {
     TextEditingController controller = TextEditingController(text: win.message);
@@ -326,7 +375,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
             //         controller.clear(); // Clears the text
             //       },
             //     ),
-              hintText: 'Edit your tiny win...',
+            hintText: 'Edit your tiny win...',
           ),
           maxLines: 4,
           controller: controller,
@@ -335,11 +384,17 @@ class _TrophyScreenState extends State<TrophyScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pop(context, controller.text);
+            },
             child: const Text('Save', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pop(context);
+            },
             child: const Text('Cancel', style: TextStyle(color: Colors.deepOrange, fontSize: 16)),
           ),
         ],
@@ -362,15 +417,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
     }
   }
 
-
   void _deleteWin(TinyWin win) async {
     winsByDate.remove(normalizeDate(win.date)); // ✅ Normalize before removing
     await TinyWinStorage.saveWins(winsByDate.values.toList());
     setState(() {});
   }
-
-
-
 
   void _loadWins() async {
     final savedWins = await TinyWinStorage.loadWins();
@@ -380,7 +431,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
       }
     });
   }
-
 
   void _goToPreviousMonth() {
     HapticFeedback.selectionClick();
@@ -404,7 +454,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
     });
   }
 
-
   Future<void> _navigateToLogWinScreen() async {
     HapticFeedback.lightImpact();
     final winText = await Navigator.push(
@@ -418,7 +467,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
       _showConfettiDialog(winText, streak);
     }
   }
-
 
   int calculateCurrentStreak() {
     DateTime today = DateTime.now();
@@ -506,19 +554,19 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
         // Bottom text (App name)
         const Positioned(
-          bottom: 20,
+          bottom: 15,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Made with ❤️', style: TextStyle(fontSize: 10)),
-              Text('Gratitude Journal: Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+              Text('Daily Journal: Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
 
         // App Store logo in the bottom-right corner
         Positioned(
-          bottom: 20,
+          bottom: 15,
           right: 10,
           child: Image.asset(
             'images/app_store.png',
@@ -681,7 +729,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
     });
   }
 
-
   DateTime normalizeDate(DateTime date) {
     return DateTime(date.year, date.month, date.day);
   }
@@ -762,10 +809,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
     return weekRows;
   }
 
-
-
-
-
   List<Widget> _buildTrophyShelves(List<List<Widget>> weekRows, double cellWidth) {
     final List<Widget> shelves = [];
 
@@ -826,11 +869,8 @@ class _TrophyScreenState extends State<TrophyScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -844,7 +884,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
           return Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('images/background.png'),
+                image: AssetImage('images/background.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -872,7 +912,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       ],
                     ),
                   ),
-              
+
                   // 🏆 Trophy Shelves
                   Expanded(
                     child: Column(
@@ -894,12 +934,13 @@ class _TrophyScreenState extends State<TrophyScreen> {
                     ),
                   ),
                   Align(
-                    alignment: Alignment.bottomLeft,
+                    alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                      padding: const EdgeInsets.only(left: 0),
                       child: IconButton(
-                        icon: Icon(Icons.info_outline, size: 30, color: Colors.amber.shade800),
+                        icon: Icon(Icons.info_outline, size: 30, color: Colors.amber.shade700),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           _showInfoDialog(context); // Show the information dialog when the button is tapped
                         },
                       ),

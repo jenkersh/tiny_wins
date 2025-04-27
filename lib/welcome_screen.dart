@@ -111,7 +111,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Gratitude Journal",
+                            "Daily Journal",
                             style: TextStyle(fontSize: 30, height: 1.0, letterSpacing: 4),
                             textAlign: TextAlign.center,
                           ),
