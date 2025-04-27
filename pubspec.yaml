@@ -45,6 +45,8 @@ dependencies:
   speech_bubble: ^0.0.9
   flutter_local_notifications: ^19.1.0
   timezone: ^0.10.0
+  url_launcher: ^6.3.1
+  in_app_review: ^2.0.10
 
 dev_dependencies:
   flutter_test:

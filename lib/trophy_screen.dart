@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_bubble/speech_bubble.dart';
 import 'package:tiny_wins/notification_service.dart';
 import 'package:tiny_wins/share_button.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
+import 'package:tiny_wins/track_wins.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'log_screen.dart';
 import 'tiny_win_model.dart'; // Your model for logged wins
 import 'package:intl/intl.dart';
@@ -21,39 +24,80 @@ class TrophyScreen extends StatefulWidget {
 
 class _TrophyScreenState extends State<TrophyScreen> {
   DateTime _selectedMonth = DateTime.now();
-  Map<DateTime, TinyWin> winsByDate = {
-    DateTime(2025, 4, 1): TinyWin(
-      date: DateTime(2025, 4, 1),
-      message: "Had a productive morning 🌞",
-    ),
-    DateTime(2025, 4, 5): TinyWin(
-      date: DateTime(2025, 4, 5),
-      message: "Finished a great book 📚",
-    ),
-    DateTime(2025, 4, 12): TinyWin(
-      date: DateTime(2025, 4, 12),
-      message: "Completed a 5K run 🏃‍♂️",
-    ),
-    DateTime(2025, 4, 15): TinyWin(
-      date: DateTime(2025, 4, 15),
-      message: "Tried a new recipe 🍳",
-    ),
-    DateTime(2025, 4, 20): TinyWin(
-      date: DateTime(2025, 4, 20),
-      message: "Spent quality time with family ❤️",
-    ),
-    DateTime(2025, 4, 25): TinyWin(
-      date: DateTime(2025, 4, 25),
-      message: "Finished a work project ahead of time 💼",
-    ),
-  };
+  Map<DateTime, TinyWin> winsByDate = {};
   final ScreenshotController _screenshotController = ScreenshotController();
+  final InAppReview _inAppReview = InAppReview.instance;
 
   @override
   void initState() {
     super.initState();
     _loadWins();
     _checkAndShowWelcomeDialog();
+  }
+
+  // Check if the user is eligible for a review prompt
+  Future<void> _checkAndPromptReview() async {
+    final winCount = await getWinCount();
+    // final prefs = await SharedPreferences.getInstance();
+    // bool hasRated = prefs.getBool('has_rated') ?? false;
+    // print(hasRated);// Get the number of wins
+
+    if (winCount == 1) {
+      // Prompt for a review after the first win
+      _requestReview();
+    } else if (winCount % 10 == 0) {
+      // Every 10 wins after the first, prompt for a review
+      _requestReview();
+    }
+  }
+
+  Future<void> _requestReview() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool hasRated = prefs.getBool('has_rated') ?? false;
+
+    // Only show review prompt if the user hasn't rated yet
+    if (!hasRated) {
+      if (await _inAppReview.isAvailable()) {
+        _inAppReview.requestReview();
+        prefs.setBool('has_rated', true); // Mark that the user has rated
+      }
+    }
+  }
+
+  // Show information dialog
+  _showInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("App Info"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Notifications can be turned off or on in iPhone settings."),
+              SizedBox(height: 10),
+              Text("Contact us at: jkershapps@gmail.com"),
+              SizedBox(height: 10),
+              Text(
+                "If you dig this app, please leave a review on the App Store listing page.",
+                //style: TextStyle(color: Colors.blue),
+              ),
+              SizedBox(height: 10),
+              Text("Made with ❤️ by Jennifer."),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Close", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Check if the user has seen the welcome dialog and show it if not
@@ -414,7 +458,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage('images/screenshot_background.png'),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
           alignment: Alignment.center,
@@ -488,7 +532,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   void _showConfettiDialog(String winText, int streakCount) {
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: true, // Allow dismissing the dialog by tapping outside
       builder: (_) => Confetti(
         child: Stack(
           children: [
@@ -527,7 +571,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -556,7 +599,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   HapticFeedback.lightImpact();
                   Navigator.pop(context);
                   if (streakCount >= 1) {
-                    _showStreakDialog(streakCount);
+                    _showStreakDialog(streakCount); // Show streak dialog after close button tap
                   }
                 },
                 child: const CircleAvatar(
@@ -569,13 +612,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
           ],
         ),
       ),
-    );
+    ).then((_) {
+      // If the user dismisses the dialog by tapping outside, trigger the streak dialog
+      if (streakCount >= 1) {
+        _showStreakDialog(streakCount);
+      }
+    });
   }
 
   void _showStreakDialog(int streakCount) {
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: true, // Allow dismissing the dialog by tapping outside
       builder: (_) => Confetti(
         child: Stack(
           children: [
@@ -613,8 +661,9 @@ class _TrophyScreenState extends State<TrophyScreen> {
               right: 8,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context); // Close the dialog when the close button is pressed
                   HapticFeedback.lightImpact();
+                  _checkAndPromptReview(); // Check and prompt for review after closing the dialog
                 },
                 child: const CircleAvatar(
                   radius: 24,
@@ -626,9 +675,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
           ],
         ),
       ),
-    );
+    ).then((_) {
+      // If the user dismisses the dialog by tapping outside, it will also trigger the review check
+      _checkAndPromptReview(); // Trigger after dismissing dialog
+    });
   }
-
 
 
   DateTime normalizeDate(DateTime date) {
@@ -687,7 +738,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                           shadows: [
-                            Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.white),
+                            Shadow(offset: Offset(1, 1), blurRadius: 2, color: Colors.yellow),
                           ],
                         ),
                       ),
@@ -842,6 +893,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       }),
                     ),
                   ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: IconButton(
+                        icon: Icon(Icons.info_outline, size: 30, color: Colors.amber.shade800),
+                        onPressed: () {
+                          _showInfoDialog(context); // Show the information dialog when the button is tapped
+                        },
+                      ),
+                    ),
+                  ),
                   // ElevatedButton(
                   //   onPressed: () async {
                   //     await NotificationService().scheduleTestNotification();
@@ -880,7 +943,6 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   //   ),
                   //   child: const Text('Clear All Wins'),
                   // ),
-
                 ],
               ),
             ),

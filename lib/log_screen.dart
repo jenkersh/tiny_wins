@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:tiny_wins/notification_service.dart';
 import 'package:tiny_wins/tiny_win_model.dart';
 import 'package:tiny_wins/tiny_win_storage.dart';
+import 'package:tiny_wins/track_wins.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -59,15 +60,18 @@ class _LogScreenState extends State<LogScreen> {
       return;
     }
 
-    // Check if the win is being logged after 8 PM
+    // Check if the win is being logged before 8 PM
     final now = DateTime.now();
-    if (now.hour >= 20) {
-      // If it's after 8 PM, cancel today's notification
+    if (now.hour < 20) {
+      // If it's before 8 PM, cancel today's notification
       await NotificationService().cancelNotificationForToday();
     }
 
     // Proceed to log the win
     await TinyWinStorage.addWin(TinyWin(date: DateTime.now(), message: winText));
+
+    // Increment win count after successfully adding
+    await incrementWinCount();
 
     // Pop the win and dismiss the dialog
     Navigator.pop(context, winText);

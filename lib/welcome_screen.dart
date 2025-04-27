@@ -61,7 +61,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(.5),
+                  Colors.white.withOpacity(.7),
                   Colors.transparent,
                 ],
                 begin: Alignment.topCenter,
@@ -73,7 +73,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(.3),
+                  Colors.white.withOpacity(.4),
                   Colors.transparent,
                 ],
                 begin: Alignment.bottomCenter,
@@ -121,7 +121,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ],
                 ),
                 const Expanded(
-                  flex: 8, // Proportional spacing in the middle
+                  flex: 7, // Proportional spacing in the middle
                   child: SizedBox(),
                 ),
                 Padding(
