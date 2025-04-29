@@ -173,6 +173,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
     final todayKey = DateTime(today.year, today.month, today.day); // Normalize to ignore time
 
     if (winsByDate.containsKey(todayKey)) {
+      HapticFeedback.lightImpact();
       // Already logged a win today
       showDialog(
         context: context,
@@ -195,6 +196,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
         ),
       );
     } else {
+      HapticFeedback.lightImpact();
       // No win today, allow user to log
       _navigateToLogWinScreen();
     }
@@ -941,12 +943,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       ),
                     ),
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () async {
-                  //     await NotificationService().scheduleTestNotification();
-                  //   },
-                  //   child: Text('Test Notification'),
-                  // ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await NotificationService().listScheduledNotifications();
+                    },
+                    child: Text('List Notifications'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await NotificationService().scheduleTestNotification();
+                    },
+                    child: Text('Send Test Notification'),
+                  ),
                   // ElevatedButton(
                   //   onPressed: () async {
                   //     final confirm = await showDialog<bool>(

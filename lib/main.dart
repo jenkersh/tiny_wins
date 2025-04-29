@@ -7,6 +7,7 @@ import 'package:tiny_wins/welcome_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();  // Ensure Flutter binding is initialized
   await NotificationService().init();
+  await NotificationService().scheduleDailyReminder();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }

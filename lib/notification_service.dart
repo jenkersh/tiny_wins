@@ -1,115 +1,106 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'tiny_win_storage.dart'; // <-- Import your TinyWinStorage
 
 class NotificationService {
-  static final NotificationService _notificationService = NotificationService._internal();
-
-  factory NotificationService() {
-    return _notificationService;
-  }
-
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  static const int dailyNotificationId = 0; // Same ID for daily repeat
 
-  // Cancel only today's notification
-  Future<void> cancelNotificationForToday() async {
-    final today = DateTime.now();
-    final notificationId = _getNotificationIdForDate(today); // Generate unique ID based on the date
-
-    await flutterLocalNotificationsPlugin.cancel(notificationId);
-    print('Canceled notification for today.');
-  }
-
-  // Helper method to generate a unique ID based on the date
-  int _getNotificationIdForDate(DateTime date) {
-    return date.year * 10000 + date.month * 100 + date.day; // A unique ID based on the date
-  }
-
-  // Initialize notification service
   Future<void> init() async {
+    // Initialize timezone data
     tz.initializeTimeZones();
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Set the correct local timezone
+    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: DarwinInitializationSettings(),
+    // Initialize notification settings
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final iOSInit = DarwinInitializationSettings();
+
+    final initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iOSInit,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await _plugin.initialize(initSettings);
+
+    // Request notification permission (especially for iOS)
+    await _plugin
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
-  // Schedule the daily reminder notification
-  Future<void> scheduleDailyNotification() async {
-    // First check if the user has logged a win today
-    final hasLoggedToday = await _hasLoggedWinToday();
+  /// Schedules a repeating 8 PM daily reminder
+  Future<void> scheduleDailyReminder() async {
+    final details = NotificationDetails(
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
 
-    if (hasLoggedToday) {
-      // Optional: cancel any previously scheduled notification
-      await cancelAllNotifications();
-      print('User already logged a win today. No notification scheduled.');
-      return;
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      20,
+      00,
+    );
+
+    print(now);
+
+    if (scheduled.isBefore(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
     }
 
-    // Otherwise, schedule the reminder notification
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+    await _plugin.zonedSchedule(
+      dailyNotificationId,
       '🎉 Tiny Wins Reminder',
       _getMotivationalMessage(),
-      _nextInstanceOfTime(20, 0), // Schedule at 8:00 PM
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_win_channel',
-          'Daily Win Reminder',
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      matchDateTimeComponents: DateTimeComponents.time,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      scheduled,
+      details,
+      matchDateTimeComponents: DateTimeComponents.time, // Repeat daily at same time
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, // still required even for iOS build!
     );
 
-    print('Scheduled daily notification for 8 PM.');
+    print('Scheduled daily reminder at 20:00.');
   }
 
-  // Check if the user has logged a win today
-  Future<bool> _hasLoggedWinToday() async {
-    final wins = await TinyWinStorage.loadWins();
-    final today = DateTime.now();
-
-    // Check if any win's date matches today
-    for (var win in wins) {
-      if (_isSameDay(win.date, today)) {
-        return true;
-      }
-    }
-    return false;
+  /// Cancels the recurring daily reminder
+  Future<void> cancelDailyReminder() async {
+    await _plugin.cancel(dailyNotificationId);
+    print('Canceled daily reminder.');
   }
 
-  // Helper function to compare if two dates are the same day
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+  /// Optional: cancel today’s if a win is logged today (no repeat affected)
+  Future<void> cancelTodayOnly() async {
+    await _plugin.cancel(dailyNotificationId);
+    print('Canceled today’s 8 PM reminder only.');
+    await scheduleDailyReminder(); // reschedule so future days still work
   }
 
-  // Get the next scheduled time (e.g., 8:00 PM today, or tomorrow if it's past 8 PM)
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1)); // Move to tomorrow if time has passed
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    if (scheduled.isBefore(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
     }
-    return scheduledDate;
+    return scheduled;
   }
 
-  // Get a motivational message for the notification
   String _getMotivationalMessage() {
     final messages = [
       "You’re doing amazing! 🌟 Log your tiny win!",
@@ -122,38 +113,47 @@ class NotificationService {
     return messages.first;
   }
 
-  // Cancel all scheduled notifications
-  Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
-    print('All notifications canceled.');
+  /// Returns a list of all scheduled notifications
+  Future<List<PendingNotificationRequest>> listScheduledNotifications() async {
+    final pending = await _plugin.pendingNotificationRequests();
+    for (var n in pending) {
+      print('ID: ${n.id}, Title: ${n.title}, Body: ${n.body}');
+    }
+    return pending;
   }
 
-  // Test notification (for testing purposes)
-  // Future<void> scheduleTestNotification() async {
-  //   DateTime now = DateTime.now();
-  //   DateTime testTime = now.add(const Duration(seconds: 10));
-  //
-  //   await flutterLocalNotificationsPlugin.zonedSchedule(
-  //     9999, // 👈 Unique ID for test
-  //     '🚀 Tiny Wins Test',
-  //     'This is your test notification!',
-  //     tz.TZDateTime.from(testTime, tz.local),
-  //     const NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //         'daily_win_channel',
-  //         'Daily Win Reminder',
-  //         importance: Importance.high,
-  //         priority: Priority.high,
-  //       ),
-  //       iOS: DarwinNotificationDetails(),
-  //     ),
-  //     // ❌ Remove uiLocalNotificationDateInterpretation and matchDateTimeComponents
-  //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-  //     matchDateTimeComponents: DateTimeComponents.time, // This should suffice for daily time-based notifications
-  //   );
-  //
-  //   print('Scheduled test notification for 10 seconds from now.');
-  // }
+  /// Immediately shows a test notification
+  /// Schedules a test notification 10 seconds from now
+  /// Schedules a test notification 10 seconds from now
+  /// Schedules a test notification 10 seconds from now
+  Future<void> scheduleTestNotification() async {
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduled = now.add(const Duration(seconds: 10));
+
+    const details = NotificationDetails(
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+
+    await _plugin.zonedSchedule(
+      9999, // Test notification ID
+      '🔔 Scheduled Test',
+      'This notification was scheduled 10 seconds ago!',
+      scheduled,
+      details,
+      matchDateTimeComponents: null, // No repeat
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, // <-- REQUIRED NOW
+    );
+
+    print('Scheduled a test notification 10 seconds from now.');
+  }
+
+
+
+
 
 
 }

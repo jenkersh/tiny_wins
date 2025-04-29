@@ -64,7 +64,7 @@ class _LogScreenState extends State<LogScreen> {
     final now = DateTime.now();
     if (now.hour < 20) {
       // If it's before 8 PM, cancel today's notification
-      await NotificationService().cancelNotificationForToday();
+      await NotificationService().cancelTodayOnly(); // Optional, skips today only
     }
 
     // Proceed to log the win
@@ -191,7 +191,7 @@ class _LogScreenState extends State<LogScreen> {
                       ),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        child: Text('Hooray! 🎉', style: TextStyle(fontSize: 18)),
+                        child: Text('Hooray! 🎉', style: TextStyle(fontSize: 18, color: Colors.black)),
                       ),
                     )
 
