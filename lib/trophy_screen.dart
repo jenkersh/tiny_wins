@@ -943,18 +943,18 @@ class _TrophyScreenState extends State<TrophyScreen> {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await NotificationService().listScheduledNotifications();
-                    },
-                    child: Text('List Notifications'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await NotificationService().scheduleTestNotification();
-                    },
-                    child: Text('Send Test Notification'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await NotificationService().listScheduledNotifications();
+                  //   },
+                  //   child: Text('List Notifications'),
+                  // ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await NotificationService().scheduleTestNotification();
+                  //   },
+                  //   child: Text('Send Test Notification'),
+                  // ),
                   // ElevatedButton(
                   //   onPressed: () async {
                   //     final confirm = await showDialog<bool>(

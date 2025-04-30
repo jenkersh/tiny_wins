@@ -68,7 +68,7 @@ class NotificationService {
 
     await _plugin.zonedSchedule(
       dailyNotificationId,
-      '🎉 Tiny Wins Reminder',
+      '🎉 Tiny Wins',
       _getMotivationalMessage(),
       scheduled,
       details,
@@ -113,43 +113,41 @@ class NotificationService {
     return messages.first;
   }
 
-  /// Returns a list of all scheduled notifications
-  Future<List<PendingNotificationRequest>> listScheduledNotifications() async {
-    final pending = await _plugin.pendingNotificationRequests();
-    for (var n in pending) {
-      print('ID: ${n.id}, Title: ${n.title}, Body: ${n.body}');
-    }
-    return pending;
-  }
-
-  /// Immediately shows a test notification
-  /// Schedules a test notification 10 seconds from now
-  /// Schedules a test notification 10 seconds from now
-  /// Schedules a test notification 10 seconds from now
-  Future<void> scheduleTestNotification() async {
-    final now = tz.TZDateTime.now(tz.local);
-    final scheduled = now.add(const Duration(seconds: 10));
-
-    const details = NotificationDetails(
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      ),
-    );
-
-    await _plugin.zonedSchedule(
-      9999, // Test notification ID
-      '🔔 Scheduled Test',
-      'This notification was scheduled 10 seconds ago!',
-      scheduled,
-      details,
-      matchDateTimeComponents: null, // No repeat
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, // <-- REQUIRED NOW
-    );
-
-    print('Scheduled a test notification 10 seconds from now.');
-  }
+  // /// Returns a list of all scheduled notifications
+  // Future<List<PendingNotificationRequest>> listScheduledNotifications() async {
+  //   final pending = await _plugin.pendingNotificationRequests();
+  //   for (var n in pending) {
+  //     print('ID: ${n.id}, Title: ${n.title}, Body: ${n.body}');
+  //   }
+  //   return pending;
+  // }
+  //
+  // /// Immediately shows a test notification
+  // /// Schedules a test notification 10 seconds from now
+  // Future<void> scheduleTestNotification() async {
+  //   final now = tz.TZDateTime.now(tz.local);
+  //   final scheduled = now.add(const Duration(seconds: 10));
+  //
+  //   const details = NotificationDetails(
+  //     iOS: DarwinNotificationDetails(
+  //       presentAlert: true,
+  //       presentBadge: true,
+  //       presentSound: true,
+  //     ),
+  //   );
+  //
+  //   await _plugin.zonedSchedule(
+  //     9999, // Test notification ID
+  //     '🔔 Scheduled Test',
+  //     'This notification was scheduled 10 seconds ago!',
+  //     scheduled,
+  //     details,
+  //     matchDateTimeComponents: null, // No repeat
+  //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, // <-- REQUIRED NOW
+  //   );
+  //
+  //   print('Scheduled a test notification 10 seconds from now.');
+  // }
 
 
 
