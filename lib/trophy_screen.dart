@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -97,7 +98,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   // Show information dialog
-  _showInfoDialog(BuildContext context) {
+  void _showInfoDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -111,9 +112,25 @@ class _TrophyScreenState extends State<TrophyScreen> {
               SizedBox(height: 10),
               Text("Contact us at: jkershapps@gmail.com"),
               SizedBox(height: 10),
-              Text(
-                "If you dig this app, please leave a review on the App Store listing page.",
-                //style: TextStyle(color: Colors.blue),
+              RichText(
+                text: TextSpan(
+                  text: "If you dig this app, please ",
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    TextSpan(
+                      text: "leave a review",
+                      style: TextStyle(color: Colors.blue.shade700),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () async {
+                          HapticFeedback.lightImpact();
+                          if (await _inAppReview.isAvailable()) {
+                            _inAppReview.openStoreListing(appStoreId: '6745152431');
+                          }
+                        },
+                    ),
+                    TextSpan(text: " in the App Store."),
+                  ],
+                ),
               ),
               SizedBox(height: 10),
               Text("Made with ❤️ by Jennifer."),
@@ -123,10 +140,12 @@ class _TrophyScreenState extends State<TrophyScreen> {
             TextButton(
               onPressed: () {
                 HapticFeedback.lightImpact();
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
-              child:
-                  Text("Close", style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text(
+                "Close",
+                style: TextStyle(color: Colors.deepOrange, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
