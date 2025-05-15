@@ -223,7 +223,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
 
   void _showWinDialog(TinyWin win) {
     final formattedDate = DateFormat.yMMMMd().format(win.date);
-
+    HapticFeedback.heavyImpact();
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -580,7 +580,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Made with ❤️', style: TextStyle(fontSize: 10)),
-              Text('Daily Journal: Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+              Text('Gratitude Journal: Tiny Wins', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -599,6 +599,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   void _showConfettiDialog(String winText, int streakCount) {
+    HapticFeedback.vibrate();
     showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -685,6 +686,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   }
 
   void _showStreakDialog(int streakCount) {
+    HapticFeedback.mediumImpact();
     showDialog<bool>(
       context: context,
       barrierDismissible: true, // Allow dismissing the dialog by tapping outside
